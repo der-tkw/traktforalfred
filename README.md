@@ -1,5 +1,5 @@
 # Trakt for Alfred
-*Trakt for Alfred* is a workflow for [Alfred 2.0] that enables you to list trending shows and search for shows on [trakt.tv]. 
+*Trakt for Alfred* is a workflow for [Alfred v2] that enables you to list trending shows and search for shows on [trakt.tv]. 
 
 ### Features
  - Display currently trending shows
@@ -16,6 +16,7 @@
 ### Usage
  - `trakt-trends` will show the current trending shows
  - `trakt-shows breaking` will search for shows containing the name *breaking*
+ - `trakt-version` will show the current version
 
 Each command will present a list of shows to you. Now you have the possibility to select a show and navigate between its summary, a cast list and a complete episode guide.
 
@@ -45,7 +46,7 @@ Each command will present a list of shows to you. Now you have the possibility t
  - [David Ferguson] for his wonderful starting-point [Workflows]
  - [@iconmonstr] for the beautiful [icons]
 
-[Alfred 2.0]:http://www.alfredapp.com/
+[Alfred v2]:http://www.alfredapp.com/
 [API key from trakt.tv]:http://trakt.tv/settings/api
 [trakt.tv]:http://trakt.tv/
 [Profile -> Settings -> API]:http://trakt.tv/settings/api
