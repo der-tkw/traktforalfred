@@ -21,7 +21,7 @@
 Each command will present a list of shows to you. Now you have the possibility to select a show and navigate between its summary, a cast list and a complete episode guide.
 
 ### Version
-1.0
+1.1
 
 ### Screenshots
 ##### Trends
