@@ -153,7 +153,7 @@ function get_latest_episode($show) {
 				$epdate = new DateTime(explode("T", $episode->first_aired_iso)[0]);
 				$interval = $today->diff($epdate);
 				// only continue if interval is negative (in the past)
-				if ($interval->invert == 1 && $interval->days < $diff) {
+				if ($interval->invert == 1 && $interval->days <= $diff) {
 					$diff = $interval->days;
 					$latestEpisode = $episode;
 				}
