@@ -182,6 +182,7 @@ function show_epguide() {
 			endforeach;
 		endforeach;
 	}
+	$w->sortresults('title', false);
 }
 
 /**
@@ -243,4 +244,5 @@ function is_valid($json) {
 	}
 	return true;
 }
+
 ?>
