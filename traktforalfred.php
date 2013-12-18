@@ -95,9 +95,11 @@ function show_summary() {
 		if (isset($latestEp)) {
 			$w->result('epguide', $latestEp->url, 'Latest Episode: S'.sprintf("%02d", $latestEp->season).'E'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
 		}
-		$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/actors.png', 'no', 'id:'.$show->tvdb_id.':cast');
 		if ($count > 0) {
 			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count.' (Without Special Episodes)', 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
+		}
+		if (isset($maincast)) {
+			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/actors.png', 'no', 'id:'.$show->tvdb_id.':cast');
 		}
 		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png');
@@ -178,7 +180,10 @@ function get_main_cast($show) {
 			$cnt++;
 		}
 	endforeach;
-	return implode(", ", $result);
+	
+	if (!empty($result)) {
+		return implode(", ", $result);
+	}
 }
 
 /**
