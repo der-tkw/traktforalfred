@@ -93,7 +93,7 @@ function show_summary() {
 		
 		$w->result('summary', '', $show->title.' ('.$show->year.')', 'Runtime: '.$show->runtime.'min, Rating: '.$show->ratings->percentage.'%', 'icon.png');
 		if (isset($latestEp)) {
-			$w->result('epguide', $latestEp->url, 'Latest Episode: S'.sprintf("%02d", $latestEp->season).'E'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
+			$w->result('epguide', $latestEp->url, 'Latest Episode: '.$latestEp->season.'x'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
 		}
 		if ($count[0] > 0) {
 			$specials;
@@ -178,7 +178,7 @@ function show_epguide() {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', 'id:'.$id.':summary');
 		foreach($show->seasons as $season):
 			foreach($season->episodes as $episode):
-				$w->result('epguide', $episode->url, 'S'.sprintf("%02d", $season->season).'E'.sprintf("%02d", $episode->episode).': '.$episode->title, 'Aired: '.explode("T", $episode->first_aired_iso)[0].', Rating: '.$episode->ratings->percentage.'%', 'icons/episode.png');
+				$w->result('epguide', $episode->url, $season->season.'x'.sprintf("%02d", $episode->episode).': '.$episode->title, 'Aired: '.explode("T", $episode->first_aired_iso)[0].', Rating: '.$episode->ratings->percentage.'%', 'icons/episode.png');
 			endforeach;
 		endforeach;
 	}
