@@ -95,8 +95,12 @@ function show_summary() {
 		if (isset($latestEp)) {
 			$w->result('epguide', $latestEp->url, 'Latest Episode: S'.sprintf("%02d", $latestEp->season).'E'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
 		}
-		if ($count > 0) {
-			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count.' (Without Special Episodes)', 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
+		if ($count[0] > 0) {
+			$specials;
+			if ($count[1] > 0) {
+				$specials = ' (Plus '.$count[1].' Special Episodes)';
+			}
+			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count[0].$specials, 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
 		}
 		if (isset($maincast)) {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/actors.png', 'no', 'id:'.$show->tvdb_id.':cast');
@@ -113,15 +117,23 @@ function show_summary() {
  * Count episodes
  */
 function count_episodes($show) {
-	$cnt = 0;
+	$counts = array();
+	$normalCnt = 0;
+	$specialCnt = 0;
 	foreach($show->seasons as $season):
 		if ($season->season > 0) {
 			foreach($season->episodes as $episode):
-				$cnt++;
+				$normalCnt++;
+			endforeach;
+		} else {
+			foreach($season->episodes as $episode):
+				$specialCnt++;
 			endforeach;
 		}
 	endforeach;
-	return $cnt;
+	array_push($counts, $normalCnt);
+	array_push($counts, $specialCnt);
+	return $counts;
 }
 
 /**
@@ -231,5 +243,4 @@ function is_valid($json) {
 	}
 	return true;
 }
-
 ?>
