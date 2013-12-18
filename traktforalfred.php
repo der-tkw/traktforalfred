@@ -135,6 +135,9 @@ function get_latest_episode($show) {
 	foreach($show->seasons as $season):
 		if ($season->season > 0) {
 			foreach($season->episodes as $episode):
+				if (!isset($episode->first_aired_iso)) {
+					continue;
+				}
 				$epdate = new DateTime(explode("T", $episode->first_aired_iso)[0]);
 				$interval = $today->diff($epdate);
 				if ($interval->days < $diff) {
