@@ -95,8 +95,10 @@ function show_summary() {
 		if (isset($latestEp)) {
 			$w->result('epguide', $latestEp->url, 'Latest Episode: S'.sprintf("%02d", $latestEp->season).'E'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
 		}
-		$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count.' (Without Special Episodes)', 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
 		$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/actors.png', 'no', 'id:'.$show->tvdb_id.':cast');
+		if ($count > 0) {
+			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count.' (Without Special Episodes)', 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
+		}
 		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png');
 		$w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
