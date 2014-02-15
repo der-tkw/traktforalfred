@@ -10,32 +10,67 @@ $query = str_replace(' ', '+', $query);
 $id;
 $operation;
 
+$showPrefix = 's:';
+$moviePrefix = 'm:';
+$trendsPrefix = 't:';
+
 if (!$apikey) {
 	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'apikey\'.', 'icons/error.png');
 } else {
-	if (strpos($query, 'id:') === 0) {
+	if (strpos($query, $showPrefix) === 0) {
+		// this is a show
 		$queryArray = explode(":", $query);
 		$id = $queryArray[1];
 		$operation = $queryArray[2];
 		
 		switch ($operation) {
 			case 'summary':
-				show_summary();
+				display_show_summary();
 				break;
 			case 'epguide':
-				show_epguide();
+				display_show_epguide();
 				break;
 			case 'cast':
-				show_cast();
+				display_show_cast();
+				break;
+		}
+	} else if (strpos($query, $moviePrefix) === 0) {
+		// this is a movie
+		$queryArray = explode(":", $query);
+		$id = $queryArray[1];
+		$operation = $queryArray[2];
+		
+		switch ($operation) {
+			case 'summary':
+				display_movie_summary();
+				break;
+			case 'cast':
+				display_movie_cast();
+				break;
+		}
+	} else if (strpos($query, $trendsPrefix) === 0) {
+		// this is a trend
+		$queryArray = explode(":", $query);
+		$trendMode = $queryArray[1];
+		
+		switch ($trendMode) {
+			case 'shows':
+				display_show_trends();
+				break;
+			case 'movies':
+				display_movie_trends();
 				break;
 		}
 	} else {
 		switch($mode) {
 			case 'trends':
-				show_trends();
+				display_trend_options();
 				break;
 			case 'shows':
 				search_shows();
+				break;
+			case 'movies':
+				search_movies();
 				break;
 		}
 	}
@@ -44,15 +79,40 @@ if (!$apikey) {
 echo $w->toxml();
 
 /**
+ * Display trending options
+ */
+function display_trend_options() {
+	global $apikey, $w, $trendsPrefix;
+	$w->result('showtrends', '', 'Display trending shows ...', '', 'icons/trend.png', 'no', $trendsPrefix.'shows');
+	$w->result('movietrends', '', 'Display trending movies ...', '', 'icons/trend.png', 'no', $trendsPrefix.'movies');
+}
+
+/**
+ * List all trending movies
+ */
+function display_movie_trends() {
+	global $apikey, $w;
+	$url = "http://api.trakt.tv/movies/trending.json/$apikey";
+	$movies = $w->request($url);
+	$movies = json_decode($movies);
+	
+	if (is_valid($movies)) {
+		$w->result('movietrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+		print_movies($movies);
+	}
+}
+
+/**
  * List all trending shows
  */
-function show_trends() {
+function display_show_trends() {
 	global $apikey, $w;
 	$url = "http://api.trakt.tv/shows/trending.json/$apikey";
 	$shows = $w->request($url);
 	$shows = json_decode($shows);
 	
 	if (is_valid($shows)) {
+		$w->result('showtrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 		print_shows($shows);
 	}
 }
@@ -63,7 +123,6 @@ function show_trends() {
 function search_shows() {
 	global $apikey, $w, $query;
 	$url = "http://api.trakt.tv/search/shows.json/$apikey?query=$query";
-	$w->write($url, 'debug.txt');
 	$shows = $w->request($url);
 	$shows = json_decode($shows);
 	
@@ -77,10 +136,28 @@ function search_shows() {
 }
 
 /**
+ * Search for movies
+ */
+function search_movies() {
+	global $apikey, $w, $query;
+	$url = "http://api.trakt.tv/search/movies.json/$apikey?query=$query";
+	$movies = $w->request($url);
+	$movies = json_decode($movies);
+	
+	if (is_valid($movies)) {
+		print_movies($movies);
+				
+		if (count($w->results()) == 0) {
+			$w->result( 'info', '', 'No results', 'Please widen your search.', 'icons/info.png', 'no');
+		}
+	}
+}
+
+/**
  * Display a show summary
  */
-function show_summary() {
-	global $apikey, $w, $id;
+function display_show_summary() {
+	global $apikey, $w, $id, $showPrefix;
 	$url = "http://api.trakt.tv/show/summary.json/$apikey/$id/extended";
 	$show = $w->request($url);
 	$show = json_decode($show);
@@ -93,23 +170,57 @@ function show_summary() {
 		
 		$w->result('summary', '', $show->title.' ('.$show->year.')', 'Runtime: '.$show->runtime.'min, Rating: '.$show->ratings->percentage.'%', 'icon.png');
 		if (isset($latestEp)) {
-			$w->result('epguide', $latestEp->url, 'Latest Episode: '.$latestEp->season.'x'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/latest.png');
+			$w->result('epguide', $latestEp->url, 'Latest Episode: '.$latestEp->season.'x'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Aired: '.explode("T", $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/date.png');
 		}
 		if ($count[0] > 0) {
 			$specials;
 			if ($count[1] > 0) {
 				$specials = ' (Plus '.$count[1].' Special Episodes)';
 			}
-			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count[0].$specials, 'icons/episodes.png', 'no', 'id:'.$show->tvdb_id.':epguide');
+			$w->result('summary', '', 'Show Episode List ...', 'Total Episodes: '.$count[0].$specials, 'icons/episodes.png', 'no', $showPrefix.$show->tvdb_id.':epguide');
 		}
 		if (isset($maincast)) {
-			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/actors.png', 'no', 'id:'.$show->tvdb_id.':cast');
+			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $showPrefix.$show->tvdb_id.':cast');
 		}
 		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png');
+		if (!empty($show->certification)) {
+			$w->result('certification', '', $show->certification, 'Certification', 'icons/certification.png');
+		}
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png');
 		$w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
 		$w->result('summary', "http://www.imdb.com/title/$show->imdb_id/", 'View on IMDB', '', 'icons/external.png');
 		$w->result('summary', "https://www.youtube.com/results?search_query=$trailer", 'Search a trailer on YouTube', '', 'icons/external.png');
+	}
+}
+
+/**
+ * Display a movie summary
+ */
+function display_movie_summary() {
+	global $apikey, $w, $id, $moviePrefix;
+	$url = "http://api.trakt.tv/movie/summary.json/$apikey/$id";
+	$movie = $w->request($url);
+	$movie = json_decode($movie);
+	
+	if (is_valid($movie)) {		
+		$maincast = get_main_cast($movie);
+		$w->result('summary', '', $movie->title.' ('.$movie->year.')', 'Runtime: '.$movie->runtime.'min, Rating: '.$movie->ratings->percentage.'%', 'icon.png');
+		if (!empty($movie->released)) {
+			date_default_timezone_set('UTC');
+			$w->result('summary', '', date("Y-m-d", $movie->released), 'Release Date', 'icons/date.png');
+		}
+		if (isset($maincast)) {
+			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $moviePrefix.$movie->imdb_id.':cast');
+		}
+		if (!empty($movie->certification)) {
+			$w->result('certification', '', $movie->certification, 'Certification', 'icons/certification.png');
+		}
+		$w->result('summary', '', $movie->stats->watchers.' Watchers, '.$movie->stats->plays.' Plays, '.$movie->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png');
+		$w->result('summary', $movie->url, 'View on trakt.tv', '', 'icons/external.png');
+		$w->result('summary', "http://www.imdb.com/title/$movie->imdb_id/", 'View on IMDB', '', 'icons/external.png');
+		if (!empty($movie->trailer)) {
+			$w->result('summary', $movie->trailer, 'Watch trailer on YouTube', '', 'icons/external.png');
+		}
 	}
 }
 
@@ -168,14 +279,14 @@ function get_latest_episode($show) {
 /**
  * Show the epguide of the current show
  */
-function show_epguide() {
-	global $apikey, $w, $id;
+function display_show_epguide() {
+	global $apikey, $w, $id, $showPrefix;
 	$url = "http://api.trakt.tv/show/summary.json/$apikey/$id/extended";
 	$show = $w->request($url);
 	$show = json_decode($show);
 	
 	if (is_valid($show)) {
-		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', 'id:'.$id.':summary');
+		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach($show->seasons as $season):
 			foreach($season->episodes as $episode):
 				$w->result('epguide', $episode->url, $season->season.'x'.sprintf("%02d", $episode->episode).': '.$episode->title, 'Aired: '.explode("T", $episode->first_aired_iso)[0].', Rating: '.$episode->ratings->percentage.'%', 'icons/episode.png');
@@ -188,10 +299,10 @@ function show_epguide() {
 /**
  * Get a list of top 2 cast
  */
-function get_main_cast($show) {
+function get_main_cast($item) {
 	$result = array();
 	$cnt = 0;
-	foreach($show->people->actors as $actor):
+	foreach($item->people->actors as $actor):
 		if ($cnt < 2) {
 			array_push($result, $actor->character.' ('.$actor->name.')');
 			$cnt++;
@@ -204,16 +315,16 @@ function get_main_cast($show) {
 }
 
 /**
- * Display the series cast
+ * Display the show cast
  */
-function show_cast() {
-	global $apikey, $w, $id;
+function display_show_cast() {
+	global $apikey, $w, $id, $showPrefix;
 	$url = "http://api.trakt.tv/show/summary.json/$apikey/$id/extended";
 	$show = $w->request($url);
 	$show = json_decode($show);
 	
 	if (is_valid($show)) {
-		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', 'id:'.$id.':summary');
+		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach($show->people->actors as $actor):
 			$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
 		endforeach;
@@ -221,12 +332,48 @@ function show_cast() {
 }
 
 /**
+ * Display the movie cast
+ */
+function display_movie_cast() {
+	global $apikey, $w, $id, $moviePrefix;
+	$url = "http://api.trakt.tv/movie/summary.json/$apikey/$id";
+	$movie = $w->request($url);
+	$movie = json_decode($movie);
+	
+	if (is_valid($movie)) {
+		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $moviePrefix.$id.':summary');
+		foreach($movie->people->actors as $actor):
+			$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
+		endforeach;
+		foreach($movie->people->directors as $director):
+			$w->result('cast', '', $director->name, 'Director', 'icons/othercast.png', 'no');
+		endforeach;
+		foreach($movie->people->writers as $writer):
+			$w->result('cast', '', $writer->name, 'Writer', 'icons/othercast.png', 'no');
+		endforeach;
+		foreach($movie->people->producers as $producer):
+			$w->result('cast', '', $producer->name, 'Producer', 'icons/othercast.png', 'no');
+		endforeach;
+	}
+}
+
+/**
+ * Print the specified movies.
+ */
+function print_movies($movies) {
+	global $w, $moviePrefix;
+	foreach($movies as $movie):
+		$w->result('movie', $movies->imdb_id, $movie->title, 'Rating: '.$movie->ratings->percentage.'% | Year: '.$movie->year.' | Genres: '.implode(", ", $movie->genres), 'icon.png', 'no', $moviePrefix.$movie->imdb_id.':summary');
+	endforeach;
+}
+
+/**
  * Print the specified shows.
  */
 function print_shows($shows) {
-	global $w;
+	global $w, $showPrefix;
 	foreach($shows as $show):
-		$w->result('show', $show->tvdb_id, $show->title, 'Rating: '.$show->ratings->percentage.'% | Year: '.$show->year.' | Network: '.$show->network.' | Genres: '.implode(", ", $show->genres), 'icon.png', 'no', 'id:'.$show->tvdb_id.':summary');
+		$w->result('show', $show->tvdb_id, $show->title, 'Rating: '.$show->ratings->percentage.'% | Year: '.$show->year.' | Network: '.$show->network.' | Genres: '.implode(", ", $show->genres), 'icon.png', 'no', $showPrefix.$show->tvdb_id.':summary');
 	endforeach;
 }
 
