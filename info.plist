@@ -6,6 +6,17 @@
 	<string>de.timbooo.traktforalfred</string>
 	<key>connections</key>
 	<dict>
+		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>2A0025CF-12DD-4820-B53D-FA117B432F1E</key>
 		<array>
 			<dict>
@@ -39,6 +50,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>66DE8641-C7D7-4C1A-B643-AAC4CEC542B4</key>
 		<array>
 			<dict>
@@ -50,42 +72,50 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>77D23569-C8E5-482F-8F26-55CE34210A28</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>77D23569-C8E5-482F-8F26-55CE34210A28</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>DE85D25A-0BDD-423C-B0BE-822D2232FC94</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Tim Weller</string>
 	<key>description</key>
-	<string>Search for shows, get episode guides etc.</string>
+	<string>Search for shows, movies, get episode guides, cast lists etc.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
 	<string>Trakt for Alfred</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>output</key>
-				<integer>0</integer>
-				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
-				<false/>
-				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>Trakt for Alfred</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -122,11 +152,11 @@ if (empty($apikey)) {
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>keyword</key>
-				<string>apikey</string>
+				<string>trakt-apikey</string>
 				<key>subtext</key>
 				<string>Get it from trakt.tv: Profile -&gt; Settings -&gt; API</string>
 				<key>text</key>
-				<string>Set Trakt API key</string>
+				<string>Set Your trakt.tv API key</string>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -134,6 +164,133 @@ if (empty($apikey)) {
 			<string>alfred.workflow.input.keyword</string>
 			<key>uid</key>
 			<string>66DE8641-C7D7-4C1A-B643-AAC4CEC542B4</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>output</key>
+				<integer>0</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>Trakt for Alfred</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>trakt-username</string>
+				<key>subtext</key>
+				<string>Stores your username for user based actions.</string>
+				<key>text</key>
+				<string>Set Your trakt.tv Username</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>script</key>
+				<string>require('workflows.php');
+$w = new Workflows();
+
+exec('touch settings.plist');
+
+$username = "{query}";
+$username = trim($username);
+
+if (empty($username)) {
+	echo 'Error: Username is empty.';
+} else {
+	$w-&gt;set('username', $username, 'settings.plist');
+	echo 'Username has been saved.';
+}</string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>77D23569-C8E5-482F-8F26-55CE34210A28</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>script</key>
+				<string>require('workflows.php');
+$w = new Workflows();
+
+exec('touch settings.plist');
+
+$password = "{query}";
+$password = trim($password);
+
+if (empty($password)) {
+	echo 'Error: Password is empty.';
+} else {
+	$w-&gt;set('password', sha1($password), 'settings.plist');
+	echo 'Password hash has been saved.';
+}</string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>trakt-password</string>
+				<key>subtext</key>
+				<string>Note: Only the SHA1 hash of your password will be stored!</string>
+				<key>text</key>
+				<string>Set Your trakt.tv Password</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -164,11 +321,11 @@ if (empty($apikey)) {
 				<key>keyword</key>
 				<string>trakt-trends</string>
 				<key>runningsubtext</key>
-				<string>Requesting trending shows...</string>
+				<string>Requesting trending shows or movies ...</string>
 				<key>script</key>
 				<string>php -f traktforalfred.php -- 'trends' '{query}'</string>
 				<key>subtext</key>
-				<string>Show trending shows from trakt.tv</string>
+				<string>Show trending shows or movies from trakt.tv</string>
 				<key>title</key>
 				<string>Trakt Trends</string>
 				<key>type</key>
@@ -193,9 +350,9 @@ if (empty($apikey)) {
 				<key>keyword</key>
 				<string>trakt-shows</string>
 				<key>runningsubtext</key>
-				<string>Searching for shows...</string>
+				<string>Searching for shows ...</string>
 				<key>script</key>
-				<string>php -f traktforalfred.php -- 'shows' '{query}' | tee -a log</string>
+				<string>php -f traktforalfred.php -- 'shows' '{query}'</string>
 				<key>subtext</key>
 				<string>Search for shows on trakt.tv</string>
 				<key>title</key>
@@ -212,47 +369,131 @@ if (empty($apikey)) {
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>trakt-movies</string>
+				<key>runningsubtext</key>
+				<string>Searching for movies ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'movies' '{query}'</string>
+				<key>subtext</key>
+				<string>Search for movies on trakt.tv</string>
+				<key>title</key>
+				<string>Trakt Movies</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>DE85D25A-0BDD-423C-B0BE-822D2232FC94</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>trakt-version</string>
+				<key>script</key>
+				<string>require('workflows.php');
+$w = new Workflows();
+$version = $w-&gt;get('version', 'settings.plist');
+$w-&gt;result('', '', 'Trakt Version', $version, 'icons/info.png');
+echo $w-&gt;toxml();
+</string>
+				<key>subtext</key>
+				<string>Show the version number of Trakt for Alfred...</string>
+				<key>title</key>
+				<string>Trakt Version</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
 	</array>
 	<key>readme</key>
-	<string>Trakt for Alfred is a workflow for Alfred 2.0. You can list current trends from trakt.tv or search for specific tv shows.
-
-For each show you can display a summary (basic stuff, latest episode, network info, stats, a few links etc.), a list of cast members and a complete episode guide. Navigation between summary, cast list and episode list is possible.
-
-Notes: You will need a trakt.tv account for this workflow to work. First thing would be search your personal API key from tract (Profile -&gt; Settings -&gt; API) and register it with the command `apikey`.
-
-Thanks to David Ferguson (http://dferg.us/workflows-class/) for his wonderful starting-point.
-Thanks to @iconmonstr (http://iconmonstr.com/) for the wonderful icons.</string>
+	<string>https://github.com/timbooo/traktforalfred/blob/master/README.md</string>
 	<key>uidata</key>
 	<dict>
+		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
+		<dict>
+			<key>ypos</key>
+			<real>230</real>
+		</dict>
 		<key>2A0025CF-12DD-4820-B53D-FA117B432F1E</key>
 		<dict>
 			<key>ypos</key>
-			<real>490</real>
+			<real>450</real>
 		</dict>
 		<key>4A84E4B0-5AD5-4018-9604-FAF6A44B2FE1</key>
 		<dict>
 			<key>ypos</key>
-			<real>360</real>
+			<real>340</real>
 		</dict>
 		<key>51D2287A-DEC4-4763-BDB3-EA04BBDBF6F5</key>
 		<dict>
 			<key>ypos</key>
-			<real>240</real>
+			<real>10</real>
+		</dict>
+		<key>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</key>
+		<dict>
+			<key>ypos</key>
+			<real>230</real>
 		</dict>
 		<key>66DE8641-C7D7-4C1A-B643-AAC4CEC542B4</key>
 		<dict>
 			<key>ypos</key>
-			<real>240</real>
+			<real>10</real>
+		</dict>
+		<key>77D23569-C8E5-482F-8F26-55CE34210A28</key>
+		<dict>
+			<key>ypos</key>
+			<real>120</real>
 		</dict>
 		<key>8DCFB11F-591C-4E73-A169-9C269926F37D</key>
 		<dict>
 			<key>ypos</key>
-			<real>360</real>
+			<real>340</real>
+		</dict>
+		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
+		<dict>
+			<key>ypos</key>
+			<real>120</real>
+		</dict>
+		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
+		<dict>
+			<key>ypos</key>
+			<real>670</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>
 			<key>ypos</key>
-			<real>240</real>
+			<real>10</real>
+		</dict>
+		<key>DE85D25A-0BDD-423C-B0BE-822D2232FC94</key>
+		<dict>
+			<key>ypos</key>
+			<real>560</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
