@@ -83,11 +83,33 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>B185FFEE-9745-445E-818C-FC6FF6CE5C3A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>DC8D91E2-C7A0-48DA-820C-9E37D8A70B49</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>77D23569-C8E5-482F-8F26-55CE34210A28</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>DC8D91E2-C7A0-48DA-820C-9E37D8A70B49</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -297,6 +319,67 @@ if (empty($password)) {
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>trakt-testauth</string>
+				<key>subtext</key>
+				<string>Check Your trakt.tv Username and Password</string>
+				<key>text</key>
+				<string>Test trakt.tv Authentication</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>B185FFEE-9745-445E-818C-FC6FF6CE5C3A</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>script</key>
+				<string>require('workflows.php');
+$w = new Workflows();
+
+exec('touch settings.plist');
+
+$apikey = $w-&gt;get('apikey', 'settings.plist');
+$username = $w-&gt;get('username', 'settings.plist');
+$password = $w-&gt;get('password', 'settings.plist');
+
+if (empty($username) || empty($password) || empty($apikey)) {
+	echo 'FAILED: API key, username or password is not set.';
+} else {
+	$url = "http://api.trakt.tv/account/settings/$apikey";
+	$post = array('username' =&gt; $username, 'password' =&gt; $password);
+	$options = array(CURLOPT_POST =&gt; 1, CURLOPT_POSTFIELDS =&gt; $post);
+	$auth = $w-&gt;request($url, $options);
+	$auth = json_decode($auth);
+	
+	if ($auth-&gt;status == 'success') {
+		echo 'Authentication successful.';
+	} else {
+		echo 'FAILED: Username or password is incorrect.';
+	}
+}</string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>DC8D91E2-C7A0-48DA-820C-9E37D8A70B49</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>plusspaces</key>
 				<false/>
 				<key>url</key>
@@ -443,12 +526,12 @@ echo $w-&gt;toxml();
 		<key>2A0025CF-12DD-4820-B53D-FA117B432F1E</key>
 		<dict>
 			<key>ypos</key>
-			<real>450</real>
+			<real>560</real>
 		</dict>
 		<key>4A84E4B0-5AD5-4018-9604-FAF6A44B2FE1</key>
 		<dict>
 			<key>ypos</key>
-			<real>340</real>
+			<real>450</real>
 		</dict>
 		<key>51D2287A-DEC4-4763-BDB3-EA04BBDBF6F5</key>
 		<dict>
@@ -473,6 +556,11 @@ echo $w-&gt;toxml();
 		<key>8DCFB11F-591C-4E73-A169-9C269926F37D</key>
 		<dict>
 			<key>ypos</key>
+			<real>450</real>
+		</dict>
+		<key>B185FFEE-9745-445E-818C-FC6FF6CE5C3A</key>
+		<dict>
+			<key>ypos</key>
 			<real>340</real>
 		</dict>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
@@ -483,17 +571,22 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>670</real>
+			<real>780</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>
 			<key>ypos</key>
 			<real>10</real>
 		</dict>
+		<key>DC8D91E2-C7A0-48DA-820C-9E37D8A70B49</key>
+		<dict>
+			<key>ypos</key>
+			<real>340</real>
+		</dict>
 		<key>DE85D25A-0BDD-423C-B0BE-822D2232FC94</key>
 		<dict>
 			<key>ypos</key>
-			<real>560</real>
+			<real>670</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
