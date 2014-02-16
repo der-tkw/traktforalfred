@@ -28,6 +28,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>3B44DF84-A58F-4BDB-96A4-56520405D6FC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>4A84E4B0-5AD5-4018-9604-FAF6A44B2FE1</key>
 		<array>
 			<dict>
@@ -485,6 +496,35 @@ if (empty($username) || empty($password) || empty($apikey)) {
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>trakt-watchlists</string>
+				<key>runningsubtext</key>
+				<string>Requesting movie or show watchlist ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'watchlists' '{query}'</string>
+				<key>subtext</key>
+				<string>Show your movie or show watchlists from trakt.tv</string>
+				<key>title</key>
+				<string>Trakt Watchlists</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>3B44DF84-A58F-4BDB-96A4-56520405D6FC</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>escaping</key>
 				<integer>36</integer>
@@ -527,6 +567,11 @@ echo $w-&gt;toxml();
 		<dict>
 			<key>ypos</key>
 			<real>560</real>
+		</dict>
+		<key>3B44DF84-A58F-4BDB-96A4-56520405D6FC</key>
+		<dict>
+			<key>ypos</key>
+			<real>780</real>
 		</dict>
 		<key>4A84E4B0-5AD5-4018-9604-FAF6A44B2FE1</key>
 		<dict>
@@ -571,7 +616,7 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>780</real>
+			<real>890</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>
