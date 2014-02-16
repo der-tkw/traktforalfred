@@ -6,6 +6,7 @@ $apikey = $w->get('apikey', 'settings.plist');
 $mode = $argv[1];
 $query = $argv[2];
 $query = str_replace(' ', '+', $query);
+$debugEnabled = false;
 
 $id;
 $operation;
@@ -33,6 +34,12 @@ if (!$apikey) {
 			case 'cast':
 				display_show_cast();
 				break;
+			case 'watchlist':
+				watchlist_item('show/watchlist', 'tvdb_id', intval($id), 'shows', $showPrefix, 'The show has been added to your watchlist!');
+				break;
+			case 'unwatchlist':
+				watchlist_item('show/unwatchlist', 'tvdb_id', intval($id), 'shows', $showPrefix, 'The show has been removed from your watchlist!');
+				break;
 		}
 	} else if (strpos($query, $moviePrefix) === 0) {
 		// this is a movie
@@ -46,6 +53,12 @@ if (!$apikey) {
 				break;
 			case 'cast':
 				display_movie_cast();
+				break;
+			case 'watchlist':
+				watchlist_item('movie/watchlist', 'imdb_id', $id, 'movies', $moviePrefix, 'The movie has been added to your watchlist!');
+				break;
+			case 'unwatchlist':
+				watchlist_item('movie/unwatchlist', 'imdb_id', $id, 'movies', $moviePrefix, 'The movie has been removed from your watchlist!');
 				break;
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
@@ -159,7 +172,8 @@ function search_movies() {
 function display_show_summary() {
 	global $apikey, $w, $id, $showPrefix;
 	$url = "http://api.trakt.tv/show/summary.json/$apikey/$id/extended";
-	$show = $w->request($url);
+	$options = get_post_options();
+	$show = $w->request($url, $options);
 	$show = json_decode($show);
 	
 	if (is_valid($show)) {
@@ -183,13 +197,20 @@ function display_show_summary() {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $showPrefix.$show->tvdb_id.':cast');
 		}
 		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png');
+		if (!empty($options)) {
+			if ($show->in_watchlist) {
+				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $showPrefix.$show->tvdb_id.':unwatchlist');
+			} else {
+				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $showPrefix.$show->tvdb_id.':watchlist');
+			}
+		}
 		if (!empty($show->certification)) {
 			$w->result('certification', '', $show->certification, 'Certification', 'icons/certification.png');
 		}
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png');
 		$w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
 		$w->result('summary', "http://www.imdb.com/title/$show->imdb_id/", 'View on IMDB', '', 'icons/external.png');
-		$w->result('summary', "https://www.youtube.com/results?search_query=$trailer", 'Search a trailer on YouTube', '', 'icons/external.png');
+		$w->result('summary', "https://www.youtube.com/results?search_query=$trailer", 'Search for a trailer on YouTube', '', 'icons/external.png');
 	}
 }
 
@@ -199,7 +220,8 @@ function display_show_summary() {
 function display_movie_summary() {
 	global $apikey, $w, $id, $moviePrefix;
 	$url = "http://api.trakt.tv/movie/summary.json/$apikey/$id";
-	$movie = $w->request($url);
+	$options = get_post_options();
+	$movie = $w->request($url, $options);
 	$movie = json_decode($movie);
 	
 	if (is_valid($movie)) {		
@@ -211,6 +233,13 @@ function display_movie_summary() {
 		}
 		if (isset($maincast)) {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $moviePrefix.$movie->imdb_id.':cast');
+		}
+		if (!empty($options)) {
+			if ($movie->in_watchlist) {
+				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $moviePrefix.$movie->imdb_id.':unwatchlist');
+			} else {
+				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $moviePrefix.$movie->imdb_id.':watchlist');
+			}
 		}
 		if (!empty($movie->certification)) {
 			$w->result('certification', '', $movie->certification, 'Certification', 'icons/certification.png');
@@ -225,54 +254,22 @@ function display_movie_summary() {
 }
 
 /**
- * Count episodes
+ * Add or remove a show/movie to/from your watchlist
  */
-function count_episodes($show) {
-	$counts = array();
-	$normalCnt = 0;
-	$specialCnt = 0;
-	foreach($show->seasons as $season):
-		if ($season->season > 0) {
-			foreach($season->episodes as $episode):
-				$normalCnt++;
-			endforeach;
-		} else {
-			foreach($season->episodes as $episode):
-				$specialCnt++;
-			endforeach;
-		}
-	endforeach;
-	array_push($counts, $normalCnt);
-	array_push($counts, $specialCnt);
-	return $counts;
-}
-
-/**
- * Find the latest episode
- */
-function get_latest_episode($show) {
-	date_default_timezone_set('UTC');
-	$today = new DateTime("now");
-	$latestEpisode;
-	$diff = 2147483647;
-	foreach($show->seasons as $season):
-		if ($season->season > 0) {
-			foreach($season->episodes as $episode):
-				if (!isset($episode->first_aired_iso)) {
-					continue;
-				}
-				$epdate = new DateTime(explode("T", $episode->first_aired_iso)[0]);
-				$interval = $today->diff($epdate);
-				// only continue if interval is negative (in the past)
-				if ($interval->invert == 1 && $interval->days <= $diff) {
-					$diff = $interval->days;
-					$latestEpisode = $episode;
-				}
-			endforeach;
-		}
-	endforeach;
-	if (isset($latestEpisode)) {
-		return $latestEpisode;
+function watchlist_item($apiName, $idName, $idValue, $fieldName, $prefix, $okMessage) {
+	global $apikey, $w, $id;
+	$url = "http://api.trakt.tv/$apiName/$apikey";
+	
+	$item = array($idName => $idValue);
+	$additional = array($fieldName => array($item));
+	$options = get_post_options($additional);
+	
+	$watchlist = $w->request($url, $options);
+	$watchlist = json_decode($watchlist);
+	
+	$w->result('watchlist', '', 'Back ...', '', 'icons/back.png', 'no', $prefix.$id.':summary');
+	if (is_valid($watchlist)) {
+		$w->result('watchlist', '', $okMessage, '', 'icon.png', 'no', $prefix.$id.':summary');
 	}
 }
 
@@ -294,24 +291,6 @@ function display_show_epguide() {
 		endforeach;
 	}
 	$w->sortresults('title', false);
-}
-
-/**
- * Get a list of top 2 cast
- */
-function get_main_cast($item) {
-	$result = array();
-	$cnt = 0;
-	foreach($item->people->actors as $actor):
-		if ($cnt < 2) {
-			array_push($result, $actor->character.' ('.$actor->name.')');
-			$cnt++;
-		}
-	endforeach;
-	
-	if (!empty($result)) {
-		return implode(", ", $result);
-	}
 }
 
 /**
@@ -378,6 +357,102 @@ function print_shows($shows) {
 }
 
 /**
+ * Get a list of top 2 cast
+ */
+function get_main_cast($item) {
+	$result = array();
+	$cnt = 0;
+	foreach($item->people->actors as $actor):
+		if ($cnt < 2) {
+			array_push($result, $actor->character.' ('.$actor->name.')');
+			$cnt++;
+		}
+	endforeach;
+	
+	if (!empty($result)) {
+		return implode(", ", $result);
+	}
+}
+
+/**
+ * Count episodes
+ */
+function count_episodes($show) {
+	$counts = array();
+	$normalCnt = 0;
+	$specialCnt = 0;
+	foreach($show->seasons as $season):
+		if ($season->season > 0) {
+			foreach($season->episodes as $episode):
+				$normalCnt++;
+			endforeach;
+		} else {
+			foreach($season->episodes as $episode):
+				$specialCnt++;
+			endforeach;
+		}
+	endforeach;
+	array_push($counts, $normalCnt);
+	array_push($counts, $specialCnt);
+	return $counts;
+}
+
+/**
+ * Find the latest episode
+ */
+function get_latest_episode($show) {
+	date_default_timezone_set('UTC');
+	$today = new DateTime("now");
+	$latestEpisode;
+	$diff = 2147483647;
+	foreach($show->seasons as $season):
+		if ($season->season > 0) {
+			foreach($season->episodes as $episode):
+				if (!isset($episode->first_aired_iso)) {
+					continue;
+				}
+				$epdate = new DateTime(explode("T", $episode->first_aired_iso)[0]);
+				$interval = $today->diff($epdate);
+				// only continue if interval is negative (in the past)
+				if ($interval->invert == 1 && $interval->days <= $diff) {
+					$diff = $interval->days;
+					$latestEpisode = $episode;
+				}
+			endforeach;
+		}
+	endforeach;
+	if (isset($latestEpisode)) {
+		return $latestEpisode;
+	}
+}
+
+/**
+ * Get the post options. Returns array with some POST options and the username and password if not empty. 
+ * Otherwise an empty array will be returned.
+ 
+ * @param $additional - additional POST fields
+ */
+function get_post_options($additional=null) {
+	global $w;
+	$username = $w->get('username', 'settings.plist');
+	$password = $w->get('password', 'settings.plist');
+	
+	if (empty($username) || empty($password)) {
+		return array();
+	}
+	
+	$post = array('username' => $username, 'password' => $password);
+	if ($additional) {
+		foreach( $additional as $k => $v ):
+			$post[$k] = $v;
+		endforeach;
+	}
+	
+	$options = array(CURLOPT_POST => 1, CURLOPT_POSTFIELDS => $post);
+	return $options;
+}
+
+/**
  * Check if the specified json is valid.
  *
  * @param $json - the json that should be checked
@@ -390,6 +465,20 @@ function is_valid($json) {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Log something to a file.
+ */
+function debuglog($what) {
+	global $w, $debugEnabled;
+	date_default_timezone_set('UTC');
+	$fileName = 'debug.log';
+	if ($debugEnabled) {
+		$w->write(date('Y-m-d G:i:s').' -- ', $fileName);
+		$w->write($what,  $fileName);
+		$w->write(PHP_EOL, $fileName);
+	}
 }
 
 ?>
