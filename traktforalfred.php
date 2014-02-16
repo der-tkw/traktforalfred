@@ -14,6 +14,7 @@ $operation;
 $showPrefix = 's:';
 $moviePrefix = 'm:';
 $trendsPrefix = 't:';
+$watchlistPrefix = 'w:';
 
 if (!$apikey) {
 	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'apikey\'.', 'icons/error.png');
@@ -74,10 +75,26 @@ if (!$apikey) {
 				display_movie_trends();
 				break;
 		}
+	} else if (strpos($query, $watchlistPrefix) === 0) {
+		// this is a watchlist
+		$queryArray = explode(":", $query);
+		$watchlistMode = $queryArray[1];
+		
+		switch ($watchlistMode) {
+			case 'shows':
+				display_show_watchlist();
+				break;
+			case 'movies':
+				display_movie_watchlist();
+				break;
+		}
 	} else {
 		switch($mode) {
 			case 'trends':
 				display_trend_options();
+				break;
+			case 'watchlists':
+				display_watchlist_options();
 				break;
 			case 'shows':
 				search_shows();
@@ -127,6 +144,57 @@ function display_show_trends() {
 	if (is_valid($shows)) {
 		$w->result('showtrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 		print_shows($shows);
+	}
+}
+
+/**
+ * Display watchlist options
+ */
+function display_watchlist_options() {
+	global $apikey, $w, $watchlistPrefix;
+	$w->result('showwatchlist', '', 'Display your show watchlist ...', '', 'icons/watchlist.png', 'no', $watchlistPrefix.'shows');
+	$w->result('moviewatchlist', '', 'Display your movie watchlist ...', '', 'icons/watchlist.png', 'no', $watchlistPrefix.'movies');
+}
+
+/**
+ * Display movie watchlist
+ */
+function display_movie_watchlist() {
+	global $apikey, $w;
+	$username = $w->get('username', 'settings.plist');
+	$url = "http://api.trakt.tv/user/watchlist/movies.json/$apikey/$username";
+	$options = get_post_options();
+	
+	if (empty($options)) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$movies = $w->request($url, $options);
+		$movies = json_decode($movies);
+		if (is_valid($movies)) {
+			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			print_movies($movies);
+		}
+	}
+}
+
+/**
+ * Display movie watchlist
+ */
+function display_show_watchlist() {
+	global $apikey, $w;
+	$username = $w->get('username', 'settings.plist');
+	$url = "http://api.trakt.tv/user/watchlist/shows.json/$apikey/$username";
+	$options = get_post_options();
+	
+	if (empty($options)) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$shows = $w->request($url, $options);
+		$shows = json_decode($shows);
+		if (is_valid($shows)) {
+			$w->result('showwatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			print_shows($shows);
+		}
 	}
 }
 
