@@ -1,28 +1,66 @@
 # Trakt for Alfred
-*Trakt for Alfred* is a workflow for [Alfred v2] that enables you to list trending shows/movies and search for shows or movies on [trakt.tv]. 
+*Trakt for Alfred* is a workflow for [Alfred v2] that enables you interact with [trakt.tv]. 
 
 ### Features
- - Display currently trending shows and movies
- - Search for specific tv shows and movies
- - Display show summary (basic stuff, latest episode, network info, stats, a few links etc.)
- - Display movie summary (basic stuff, release date, main cast, stats, trailer etc.)
- - Display list of cast members (both tv shows and movies)
- - Display a complete episode guide (shows only)
- - Navigate between summary, cast members and episode list
+#### General Features
+ - Show trending movies
+ - Show trending shows
+ - Display show watchlist (if user authenticated correctly)
+ - Display movie watchlist (if user authenticated correctly)
+ - Save API key, username, password-hash
+ - Test currently stored credentials
+ - Show version number
+
+#### Show Features
+ - Display summary
+    - Basic info
+    - Latest episode
+    - Certification (e.g. 'TV-MA')
+    - Network info
+    - Search trailer
+    - trakt.tv Stats
+    - View on IMDB
+    - View on trakt.tv
+    - Add/Remove to/from watchlist (if user is authenticated correctly)
+ - Display ist of actors
+ - Display episode list (including special episodes)
+
+#### Movie Features
+ - Display summary
+    - Basic info
+    - Release date
+    - Certification (e.g. 'R')
+    - View trailer in YouTube
+    - trakt.tv Stats
+    - View on IMDB
+    - View on trakt.tv
+    - Add/Remove to/from watchlist (if user is authenticated correctly)
+ - Display list of actors, directors, producers, writers
 
 ### Notes
- - You need a trakt.tv account for this workflow. Get your personal [API key from trakt.tv] and register it with the following command: `apikey <your-api-key-here>`. Otherwise this workflow will not function.
+ - You need a trakt.tv account for this workflow. 
+ - You need to store your [API key from trakt.tv] and your credentials (username/password).
+ - Your password will be saved as SHA1 hash. It is not stored in plain text!
+ - As soon as OAuth authentication is available it will replace the current authentication.
 
-### Usage
- - `trakt-trends` will show the current trending options
- - `trakt-shows breaking` will search for shows containing the name *breaking*
- - `trakt-movies thor` will search for movies containing the name *thor*
+### Command Overview
+![][commands]
+
+### Setup Commands
+ - `trakt-apikey <your-api-key-here>` will store your API key
+ - `trakt-username <your-username-here>` will store your username
+ - `trakt-password <your-password-here>` will store your password as SHA1 hash
+ - `trakt-testauth` will check the currently stored credentials
  - `trakt-version` will show the current version
 
-Each command will present a list of shows or to you. Now you have the possibility to select a show/movie and navigate between its summary, a cast list and a complete episode guide (shows only).
+### General Commands
+ - `trakt-trends` will show the current trending options
+ - `trakt-watchlists` will show the current watchlist options
+ - `trakt-shows breaking` will search for shows containing the name *breaking*
+ - `trakt-movies thor` will search for movies containing the name *thor*
 
 ### Version
-1.2
+1.3 beta
 
 ### Screenshots
 ##### Trends
@@ -33,6 +71,15 @@ Each command will present a list of shows or to you. Now you have the possibilit
 
 ##### Trends Movies
 ![Trends][screenshot_trends_movies]
+
+##### Watchlists
+![Trends][screenshot_watchlists]
+
+##### Watchlist Shows
+![Trends][screenshot_watchlist_shows]
+
+##### Watchlist Movies
+![Trends][screenshot_watchlist_movies]
 
 ##### Search Shows
 ![Search][screenshot_search_shows]
@@ -70,6 +117,7 @@ Each command will present a list of shows or to you. Now you have the possibilit
 [Workflows]:https://github.com/jdfwarrior/Workflows
 [@iconmonstr]:https://twitter.com/iconmonstr
 [icons]:http://iconmonstr.com/
+[commands]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/commands.png
 [screenshot_summary_show]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/summary_show.png
 [screenshot_summary_movie]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/summary_movie.png
 [screenshot_search_shows]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/search_shows.png
@@ -77,6 +125,9 @@ Each command will present a list of shows or to you. Now you have the possibilit
 [screenshot_trends]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/trends.png
 [screenshot_trends_shows]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/trends_shows.png
 [screenshot_trends_movies]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/trends_movies.png
+[screenshot_watchlists]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/watchlists.png
+[screenshot_watchlist_shows]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/watchlist_shows.png
+[screenshot_watchlist_movies]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/watchlist_movies.png
 [screenshot_epguide]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/epguide.png
 [screenshot_cast_show]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/cast_show.png
 [screenshot_cast_movie]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/cast_movie.png
