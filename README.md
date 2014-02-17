@@ -3,13 +3,13 @@
 
 ### Features
 #### General Features
- - Show trending movies
- - Show trending shows
+ - Display trending movies
+ - Display trending shows
  - Display show watchlist (if user authenticated correctly)
  - Display movie watchlist (if user authenticated correctly)
- - Save API key, username, password-hash
+ - Display version number
+ - Store API key, username, password-hash
  - Test currently stored credentials
- - Show version number
 
 #### Show Features
  - Display summary
@@ -22,7 +22,7 @@
     - View on IMDB
     - View on trakt.tv
     - Add/Remove to/from watchlist (if user is authenticated correctly)
- - Display ist of actors
+ - Display list of actors
  - Display episode list (including special episodes)
 
 #### Movie Features
@@ -40,11 +40,11 @@
 ### Notes
  - You need a trakt.tv account for this workflow. 
  - You need to store your [API key from trakt.tv] and your credentials (username/password).
- - Your password will be saved as SHA1 hash. It is not stored in plain text!
- - As soon as OAuth authentication is available it will replace the current authentication.
+ - Your password will be stored as SHA1 hash. It is not stored in plain text!
+ - As soon as OAuth authentication is available it will replace the current authentication approach.
 
 ### Command Overview
-![][commands]
+![][screenshot_commands]
 
 ### Setup Commands
  - `trakt-apikey <your-api-key-here>` will store your API key
@@ -60,7 +60,7 @@
  - `trakt-movies thor` will search for movies containing the name *thor*
 
 ### Version
-1.3 beta
+1.3
 
 ### Screenshots
 ##### Trends
@@ -117,7 +117,7 @@
 [Workflows]:https://github.com/jdfwarrior/Workflows
 [@iconmonstr]:https://twitter.com/iconmonstr
 [icons]:http://iconmonstr.com/
-[commands]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/commands.png
+[screenshot_commands]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/commands.png
 [screenshot_summary_show]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/summary_show.png
 [screenshot_summary_movie]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/summary_movie.png
 [screenshot_search_shows]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/search_shows.png
