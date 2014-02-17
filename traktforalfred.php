@@ -323,6 +323,13 @@ function display_movie_summary() {
 
 /**
  * Add or remove a show/movie to/from your watchlist
+ *
+ * @param $apiName - must be 'show/watchlist', 'show/unwatchlist', 'movie/watchlist' or 'movie/unwatchlist'
+ * @param $idName - must be 'imdb_id' or 'tvdb_id'
+ * @param $idValue - imdb_id string or tvdb_id integer
+ * @param $fieldName - must be 'shows' or 'movies'
+ * @param $prefix - current prefix
+ * @param $okMessage - the OK message
  */
 function watchlist_item($apiName, $idName, $idValue, $fieldName, $prefix, $okMessage) {
 	global $apikey, $w, $id;
@@ -405,7 +412,9 @@ function display_movie_cast() {
 }
 
 /**
- * Print the specified movies.
+ * Print the specified movies
+ *
+ * @param $movies - the movies
  */
 function print_movies($movies) {
 	global $w, $moviePrefix;
@@ -415,7 +424,9 @@ function print_movies($movies) {
 }
 
 /**
- * Print the specified shows.
+ * Print the specified shows
+ *
+ * @param $shows - the shows
  */
 function print_shows($shows) {
 	global $w, $showPrefix;
@@ -425,7 +436,9 @@ function print_shows($shows) {
 }
 
 /**
- * Get a list of top 2 cast
+ * Get a list of top 2 cast for the specified item (may be a show or a movie)
+ *
+ * @param $item - the item
  */
 function get_main_cast($item) {
 	$result = array();
@@ -443,7 +456,9 @@ function get_main_cast($item) {
 }
 
 /**
- * Count episodes
+ * Count episodes of the specified show
+ *
+ * @param $show - the show
  */
 function count_episodes($show) {
 	$counts = array();
@@ -466,7 +481,9 @@ function count_episodes($show) {
 }
 
 /**
- * Find the latest episode
+ * Find the latest episode for the specified show
+ *
+ * @param $show - the show
  */
 function get_latest_episode($show) {
 	date_default_timezone_set('UTC');
@@ -498,9 +515,9 @@ function get_latest_episode($show) {
  * Get the post options. Returns array with some POST options and the username and password if not empty. 
  * Otherwise an empty array will be returned.
  
- * @param $additional - additional POST fields
+ * @param $payload - the POST body payload
  */
-function get_post_options($additional=null) {
+function get_post_options($payload=null) {
 	global $w;
 	$username = $w->get('username', 'settings.plist');
 	$password = $w->get('password', 'settings.plist');
@@ -509,14 +526,12 @@ function get_post_options($additional=null) {
 		return array();
 	}
 	
-	$post = array('username' => $username, 'password' => $password);
-	if ($additional) {
-		foreach( $additional as $k => $v ):
-			$post[$k] = $v;
-		endforeach;
-	}
-	
-	$options = array(CURLOPT_POST => 1, CURLOPT_POSTFIELDS => $post);
+	$options = array(
+				CURLOPT_POST => 1, 
+				CURLOPT_USERPWD => "$username:$password", 
+				CURLOPT_POSTFIELDS => json_encode($payload), 
+				CURLOPT_TIMEOUT => 30, 
+				CURLOPT_RETURNTRANSFER => true);
 	return $options;
 }
 
@@ -537,6 +552,8 @@ function is_valid($json) {
 
 /**
  * Log something to a file.
+ *
+ * @param $what - object to log
  */
 function debuglog($what) {
 	global $w, $debugEnabled;
