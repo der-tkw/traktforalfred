@@ -17,7 +17,7 @@ $trendsPrefix = 't:';
 $watchlistPrefix = 'w:';
 
 if (!$apikey) {
-	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'apikey\'.', 'icons/error.png');
+	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'trakt-apikey\'.', 'icons/error.png');
 } else {
 	if (strpos($query, $showPrefix) === 0) {
 		// this is a show
