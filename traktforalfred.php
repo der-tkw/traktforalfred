@@ -1,5 +1,6 @@
 <?php
 
+date_default_timezone_set('UTC');
 require('workflows.php');
 $w = new Workflows();
 $apikey = $w->get('apikey', 'settings.plist');
@@ -526,7 +527,6 @@ function display_movie_summary() {
 		$maincast = get_main_cast($movie);
 		$w->result('summary', '', $movie->title.' ('.$movie->year.')', handle_multiple_information(array('Runtime' => $movie->runtime, 'Rating' => $movie->ratings->percentage, 'Genres' => implode(', ', $movie->genres))), 'icon.png', 'no');
 		if (!empty($movie->released)) {
-			date_default_timezone_set('UTC');
 			$w->result('summary', '', date('Y-m-d', $movie->released), 'Release Date', 'icons/date.png', 'no');
 		}
 		if (!empty($movie->certification)) {
@@ -558,7 +558,9 @@ function display_episode_summary() {
 		$w->result('summary', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':epguide');
 		$w->result('summary', '', $ep->episode->season.'x'.sprintf('%02d', $ep->episode->number).': '.$ep->episode->title.' ('.date('Y', $ep->episode->first_aired).')', handle_multiple_information(array('Show' => $ep->show->title, 'Rating' => $ep->episode->ratings->percentage)), 'icon.png', 'no');
 		$w->result('summary', '', date('Y-m-d', $ep->episode->first_aired), 'Air Date', 'icons/date.png', 'no');
-		$w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
+		if (!empty($ep->episode->overview)) {
+			$w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
+		}
 		if (is_authenticated()) {
 			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
 			$w->result('summary', '', $ep->episode->plays, 'Personal Plays', 'icons/stats.png', 'no');
@@ -663,7 +665,6 @@ function display_show_epguide() {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach ($show->seasons as $season) {
 			foreach ($season->episodes as $episode) {
-				_debug(json_encode($episode));
 				$w->result('epguide', '', $season->season.'x'.sprintf('%02d', $episode->episode).': '.$episode->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $episode->first_aired), 'Rating' => $episode->ratings->percentage)), 'icons/episode.png', 'no', $episodePrefix.$id.':'.$episode->season.':'.$episode->episode.':summary');
 			}
 		}
@@ -757,7 +758,6 @@ function print_shows($shows) {
  * @param $shows - the show wrappers
  */
 function print_episodes($shows) {
-	date_default_timezone_set('UTC');
 	global $w, $episodePrefix;
 	foreach ($shows as $show) {
 		foreach ($show->episodes as $ep) {
@@ -819,7 +819,6 @@ function count_episodes($show) {
  * @param $show - the show
  */
 function get_latest_episode($show) {
-	date_default_timezone_set('UTC');
 	$today = new DateTime("now");
 	$latestEpisode;
 	$diff = 2147483647;
@@ -953,7 +952,6 @@ function check_empty($what) {
  */
 function _debug($what) {
 	global $w, $debugEnabled;
-	date_default_timezone_set('UTC');
 	$fileName = 'debug.log';
 	if ($debugEnabled) {
 		$w->write(date('Y-m-d G:i:s').' -- ', $fileName, FILE_APPEND);
