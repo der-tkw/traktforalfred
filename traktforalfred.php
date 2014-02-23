@@ -38,15 +38,8 @@ if (!$apikey) {
 			case 'cast':
 				display_show_cast();
 				break;
-			case 'options':
-				display_show_options();
-				break;
 			case 'watchlist':
 			case 'unwatchlist':
-			case 'seen':
-			case 'unseen':
-			case 'library':
-			case 'unlibrary':
 				handle_show_option("show/$operation");
 				break;
 		}
@@ -262,18 +255,6 @@ function display_movie_options() {
 }
 
 /**
- * Display show options
- */
-function display_show_options() {
-	global $apikey, $showPrefix, $id;
-	$show = request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id");
-
-	if (is_valid($show)) {
-		display_options($show, $showPrefix.$id.':summary', $showPrefix.$id);
-	}
-}
-
-/**
  * Display episode options
  */
 function display_episode_options() {
@@ -430,7 +411,11 @@ function display_show_summary() {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $showPrefix.$id.':cast');
 		}
 		if (is_authenticated()) {
-			$w->result('options', '', 'Show Options ...', 'Watchlist/Library/Seen', 'icons/options.png', 'no', $showPrefix.$id.':options');
+			if ($show->in_watchlist) {
+				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $showPrefix.$id.':unwatchlist');
+			} else {
+				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $showPrefix.$id.':watchlist');
+			}
 		}
 		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png', 'no');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
@@ -503,7 +488,7 @@ function handle_show_option($apiName) {
 	$show = get_show();
 	$item = array('imdb_id' => $show->imdb_id, 'tvdb_id' => $show->tvdb_id, 'title' => $show->title, 'year' => $show->year);
 	$additional = array('shows' => array($item));
-	handle_option($apiName, $showPrefix.$id.':options', $additional);
+	handle_option($apiName, $showPrefix.$id.':summary', $additional);
 }
 
 /**
