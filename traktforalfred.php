@@ -477,14 +477,15 @@ function display_show_summary() {
 		if (isset($latestEp) && $show->status == 'Ended') {
 			$title = $title.'-'.date('Y', $latestEp->first_aired);
 		} else {
+			// no end year available, just add a hyphen and space to indicate progress
 			$title = $title.'- ';
 		}
 		// close parenthesis in any case
 		$title = $title.')';
 
-		$w->result('summary', '', $title, 'Runtime: '.$show->runtime.'min, Rating: '.$show->ratings->percentage.'%, First Aired: '.explode('T', $show->first_aired_iso)[0], 'icon.png', 'no');
+		$w->result('summary', '', $title, handle_multiple_information(array('Runtime' => $show->runtime, 'Rating' => $show->ratings->percentage, 'First Aired' => date('Y-m-d',  $show->first_aired))), 'icon.png', 'no');
 		if (isset($latestEp)) {
-			$w->result('epguide', '', 'Latest Episode: '.$latestEp->season.'x'.sprintf("%02d", $latestEp->episode).': '.$latestEp->title, 'Air Date: '.explode('T', $latestEp->first_aired_iso)[0].', Rating: '.$latestEp->ratings->percentage.'%', 'icons/date.png', 'no', $episodePrefix.$id.':'.$latestEp->season.':'.$latestEp->episode.':summary');
+			$w->result('epguide', '', 'Latest Episode: '.$latestEp->season.'x'.sprintf('%02d', $latestEp->episode).': '.$latestEp->title, handle_multiple_information(array('Air Date' => date('Y-m-d', $latestEp->first_aired), 'Rating' => $latestEp->ratings->percentage)), 'icons/date.png', 'no', $episodePrefix.$id.':'.$latestEp->season.':'.$latestEp->episode.':summary');
 		}
 		if (!empty($show->certification)) {
 			$w->result('certification', '', $show->certification, 'Certification', 'icons/certification.png', 'no');
@@ -506,7 +507,7 @@ function display_show_summary() {
 				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $showPrefix.$id.':watchlist');
 			}
 		}
-		$w->result('summary', '', 'Network: '.$show->network.', Status: '.$show->status, 'Air Day: '.$show->air_day.', Air Time: '.$show->air_time, 'icons/network.png', 'no');
+		$w->result('summary', '', handle_multiple_information(array('Network' => $show->network, 'Status' => $show->status)), handle_multiple_information(array('Air Day' => $show->air_day, 'Air Time' => $show->air_time)), 'icons/network.png', 'no');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
 		$w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
 		$w->result('summary', "http://www.imdb.com/title/$id/", 'View on IMDB', '', 'icons/external.png');
@@ -523,10 +524,10 @@ function display_movie_summary() {
 
 	if (is_valid($movie)) {
 		$maincast = get_main_cast($movie);
-		$w->result('summary', '', $movie->title.' ('.$movie->year.')', 'Runtime: '.$movie->runtime.'min, Rating: '.$movie->ratings->percentage.'%', 'icon.png', 'no');
+		$w->result('summary', '', $movie->title.' ('.$movie->year.')', handle_multiple_information(array('Runtime' => $movie->runtime, 'Rating' => $movie->ratings->percentage, 'Genres' => implode(', ', $movie->genres))), 'icon.png', 'no');
 		if (!empty($movie->released)) {
 			date_default_timezone_set('UTC');
-			$w->result('summary', '', date("Y-m-d", $movie->released), 'Release Date', 'icons/date.png', 'no');
+			$w->result('summary', '', date('Y-m-d', $movie->released), 'Release Date', 'icons/date.png', 'no');
 		}
 		if (!empty($movie->certification)) {
 			$w->result('summary', '', $movie->certification, 'Certification', 'icons/certification.png', 'no');
@@ -555,8 +556,8 @@ function display_episode_summary() {
 
 	if (is_valid($ep)) {
 		$w->result('summary', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':epguide');
-		$w->result('summary', '', $ep->episode->season.'x'.sprintf("%02d", $ep->episode->number).': '.$ep->episode->title.' ('.explode("-", $ep->episode->first_aired_iso)[0].')', 'Show: '.$ep->show->title.', Rating: '.$ep->episode->ratings->percentage.'%', 'icon.png', 'no');
-		$w->result('summary', '', explode('T', $ep->episode->first_aired_iso)[0], 'Air Date', 'icons/date.png', 'no');
+		$w->result('summary', '', $ep->episode->season.'x'.sprintf('%02d', $ep->episode->number).': '.$ep->episode->title.' ('.date('Y', $ep->episode->first_aired).')', handle_multiple_information(array('Show' => $ep->show->title, 'Rating' => $ep->episode->ratings->percentage)), 'icon.png', 'no');
+		$w->result('summary', '', date('Y-m-d', $ep->episode->first_aired), 'Air Date', 'icons/date.png', 'no');
 		$w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
 		if (is_authenticated()) {
 			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
@@ -662,7 +663,7 @@ function display_show_epguide() {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach($show->seasons as $season):
 			foreach($season->episodes as $episode):
-				$w->result('epguide', '', $season->season.'x'.sprintf("%02d", $episode->episode).': '.$episode->title, 'Show: '.$show->title.', Air Date: '.explode('T', $episode->first_aired_iso)[0].', Rating: '.$episode->ratings->percentage.'%', 'icons/episode.png', 'no', $episodePrefix.$id.':'.$episode->season.':'.$episode->episode.':summary');
+				$w->result('epguide', '', $season->season.'x'.sprintf('%02d', $episode->episode).': '.$episode->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $episode->first_aired), 'Rating' => $episode->ratings->percentage)), 'icons/episode.png', 'no', $episodePrefix.$id.':'.$episode->season.':'.$episode->episode.':summary');
 			endforeach;
 		endforeach;
 	}
@@ -679,7 +680,9 @@ function display_show_cast() {
 	if (is_valid($show)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach($show->people->actors as $actor):
-			$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
+			if (!empty($actor->character) && !empty($actor->name)) {
+				$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
+			}
 		endforeach;
 	}
 }
@@ -694,7 +697,9 @@ function display_movie_cast() {
 	if (is_valid($movie)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $moviePrefix.$id.':summary');
 		foreach($movie->people->actors as $actor):
-			$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
+			if (!empty($actor->character) && !empty($actor->name)) {
+				$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
+			}
 		endforeach;
 		foreach($movie->people->directors as $director):
 			$w->result('cast', '', $director->name, 'Director', 'icons/othercast.png', 'no');
@@ -729,7 +734,7 @@ function display_count($count, $msg='Total') {
 function print_movies($movies) {
 	global $w, $moviePrefix;
 	foreach($movies as $movie):
-		$w->result('movie', '', $movie->title, 'Rating: '.$movie->ratings->percentage.'% | Year: '.$movie->year.' | Genres: '.implode(", ", $movie->genres), 'icon.png', 'no', $moviePrefix.$movie->imdb_id.':summary');
+		$w->result('movie', '', $movie->title, handle_multiple_information(array('Rating' => $movie->ratings->percentage, 'Year' => $movie->year, 'Genres' => implode(', ', $movie->genres))), 'icon.png', 'no', $moviePrefix.$movie->imdb_id.':summary');
 	endforeach;
 }
 
@@ -741,7 +746,7 @@ function print_movies($movies) {
 function print_shows($shows) {
 	global $w, $showPrefix;
 	foreach($shows as $show):
-		$w->result('show', '', $show->title, 'Rating: '.$show->ratings->percentage.'% | Year: '.$show->year.' | Network: '.$show->network.' | Genres: '.implode(", ", $show->genres), 'icon.png', 'no', $showPrefix.$show->imdb_id.':summary');
+		$w->result('show', '', $show->title, handle_multiple_information(array('Rating' => $show->ratings->percentage, 'Year' => $show->year, 'Network' => $show->network, 'Genres' => implode(', ', $show->genres))), 'icon.png', 'no', $showPrefix.$show->imdb_id.':summary');
 	endforeach;
 }
 
@@ -755,7 +760,7 @@ function print_episodes($shows) {
 	global $w, $episodePrefix;
 	foreach($shows as $show):
 		foreach($show->episodes as $ep):
-			$w->result('episode', '', $ep->season.'x'.sprintf("%02d", $ep->number).': '.$ep->title.' ('.explode("-", date("Y-m-d", $ep->first_aired))[0].')', $show->title, 'icon.png', 'no', $episodePrefix.$show->imdb_id.':'.$ep->season.':'.$ep->number.':summary');
+			$w->result('episode', '', $ep->season.'x'.sprintf('%02d', $ep->number).': '.$ep->title.' ('.date('Y', $ep->first_aired).')', $show->title, 'icon.png', 'no', $episodePrefix.$show->imdb_id.':'.$ep->season.':'.$ep->number.':summary');
 		endforeach;
 	endforeach;
 }
@@ -770,8 +775,10 @@ function get_main_cast($item) {
 	$cnt = 0;
 	foreach($item->people->actors as $actor):
 		if ($cnt < 2) {
-			array_push($result, $actor->character.' ('.$actor->name.')');
-			$cnt++;
+			if (!empty($actor->character) && !empty($actor->name)) {
+				array_push($result, $actor->character.' ('.$actor->name.')');
+				$cnt++;
+			}
 		}
 	endforeach;
 
@@ -834,6 +841,30 @@ function get_latest_episode($show) {
 	if (isset($latestEpisode)) {
 		return $latestEpisode;
 	}
+}
+
+/**
+ * Handle multiple information, skip empty info etc.
+ *
+ * @param $infos - array of information key/value pairs
+ */
+function handle_multiple_information($infos) {
+	$separator = ', ';
+	$result;
+	foreach($infos as $key => $value):
+		if (!empty($value)) {
+			$result = $result.$separator;
+			$result = $result.$key.': '.$value;
+			
+			// handle eventual suffixes
+			if ($key == 'Rating') {
+				$result = $result.'%';
+			} else if ($key == 'Runtime') {
+				$result = $result.'min';
+			}
+		}
+	endforeach;
+	return trim($result, $separator);
 }
 
 /**
