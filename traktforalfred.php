@@ -398,8 +398,19 @@ function display_show_summary() {
 		$title = $show->title;
 		// add year only if the titles doesn't already end with a year (just a simple/lazy check for closing parenthesis)
 		if (!(strcmp(substr($title, strlen($title) - 1), ')') === 0)) {
-			$title = $title.' ('.$show->year.')';
+			$title = $title.' ('.$show->year;
+		} else {
+			// remove trailing parenthesis
+			$title = rtrim($title, ")");
 		}
+		// add end year in case the show ended
+		if (isset($latestEp) && $show->status == 'Ended') {
+			$title = $title.'-'.date('Y', $latestEp->first_aired);
+		} else {
+			$title = $title.'- ';
+		}
+		// close parenthesis in any case
+		$title = $title.')';
 
 		$w->result('summary', '', $title, 'Runtime: '.$show->runtime.'min, Rating: '.$show->ratings->percentage.'%, First Aired: '.explode('T', $show->first_aired_iso)[0], 'icon.png', 'no');
 		if (isset($latestEp)) {
