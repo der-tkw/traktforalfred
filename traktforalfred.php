@@ -325,6 +325,7 @@ function display_movie_watchlist() {
 
 		if (is_valid($movies)) {
 			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($movies));
 			print_movies($movies);
 			check_empty('watchlist');
 		}
@@ -348,6 +349,7 @@ function display_movie_library($apiName) {
 
 		if (is_valid($movies)) {
 			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($movies));
 			print_movies($movies);
 			check_empty('library');
 		}
@@ -369,6 +371,7 @@ function display_show_watchlist() {
 
 		if (is_valid($shows)) {
 			$w->result('showwatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($shows));
 			print_shows($shows);
 			check_empty('watchlist');
 		}
@@ -392,6 +395,7 @@ function display_show_library($apiName) {
 
 		if (is_valid($shows)) {
 			$w->result('showlibrary', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($shows));
 			print_shows($shows);
 			check_empty('library');
 		}
@@ -413,6 +417,7 @@ function display_episode_watchlist() {
 
 		if (is_valid($shows)) {
 			$w->result('episodewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($shows));
 			print_episodes($eps);
 			check_empty('watchlist');
 		}
@@ -427,6 +432,7 @@ function search_shows() {
 	$shows = request_trakt("http://api.trakt.tv/search/shows.json/$apikey?query=$query");
 
 	if (is_valid($shows)) {
+		display_count(count($shows));
 		print_shows($shows);
 		check_empty_search();
 	}
@@ -440,6 +446,7 @@ function search_movies() {
 	$movies = request_trakt("http://api.trakt.tv/search/movies.json/$apikey?query=$query");
 
 	if (is_valid($movies)) {
+		display_count(count($movies));
 		print_movies($movies);
 		check_empty_search();
 	}
@@ -702,6 +709,19 @@ function display_movie_cast() {
 }
 
 /**
+ * Display a count with the optional message (only if count is not 0)
+ *
+ * @param $count - the count
+ * @param $msg - the optional message (default: 'Total')
+ */
+function display_count($count, $msg='Total') {
+	global $w;
+	if ($count > 0) {
+		$w->result('count', '', $msg.': '.$count, '', 'icons/info.png', 'no');
+	}
+}
+
+/**
  * Print the specified movies
  *
  * @param $movies - the movies
@@ -877,7 +897,7 @@ function is_valid($response) {
 function check_empty_search() {
 	global $w;
 	if (count($w->results()) == 0) {
-		$w->result('info', '', 'No results', 'Please widen your search.', 'icons/info.png', 'no');
+		$w->result('info', '', 'No results.', 'Please widen your search.', 'icons/info.png', 'no');
 	}
 }
 
