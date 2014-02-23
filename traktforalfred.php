@@ -18,6 +18,7 @@ $moviePrefix = 'm:';
 $trendsPrefix = 't:';
 $watchlistPrefix = 'w:';
 $episodePrefix = 'e:';
+$libraryPrefix = 'l:';
 
 if (!$apikey) {
 	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'apikey\'.', 'icons/error.png', 'no');
@@ -121,6 +122,25 @@ if (!$apikey) {
 				display_episode_watchlist();
 				break;
 		}
+	} else if (strpos($query, $libraryPrefix) === 0) {
+		// this is a library
+		$queryArray = explode(":", $query);
+		$libraryType = $queryArray[1];
+
+		switch ($libraryType) {
+			case 'watchedshows':
+				display_show_library('watched');
+				break;
+			case 'collectedshows':
+				display_show_library('collection');
+				break;
+			case 'watchedmovies':
+				display_movie_library('watched');
+				break;
+			case 'collectedmovies':
+				display_movie_library('collection');
+				break;
+		}
 	} else {
 		switch($mode) {
 			case 'trends':
@@ -128,6 +148,9 @@ if (!$apikey) {
 				break;
 			case 'watchlists':
 				display_watchlist_options();
+				break;
+			case 'libraries':
+				display_library_options();
 				break;
 			case 'shows':
 				search_shows();
@@ -277,6 +300,17 @@ function display_watchlist_options() {
 }
 
 /**
+ * Display library options
+ */
+function display_library_options() {
+	global $w, $libraryPrefix;
+	$w->result('library', '', 'Display watched shows ...', '', 'icons/library.png', 'no', $libraryPrefix.'watchedshows');
+	$w->result('library', '', 'Display collected shows ...', '', 'icons/library.png', 'no', $libraryPrefix.'collectedshows');
+	$w->result('library', '', 'Display watched movies ...', '', 'icons/library.png', 'no', $libraryPrefix.'watchedmovies');
+	$w->result('library', '', 'Display collected movies ...', '', 'icons/library.png', 'no', $libraryPrefix.'collectedmovies');
+}
+
+/**
  * Display movie watchlist
  */
 function display_movie_watchlist() {
@@ -292,6 +326,30 @@ function display_movie_watchlist() {
 		if (is_valid($movies)) {
 			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 			print_movies($movies);
+			check_empty('watchlist');
+		}
+	}
+}
+
+/**
+ * Display movie library
+ *
+ * @param $apiName - the name of the api (must bei either 'collection' or 'watched')
+ */
+function display_movie_library($apiName) {
+	global $apikey, $w;
+	$options = get_post_options();
+
+	if (empty($options)) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$username = $w->get('username', 'settings.plist');
+		$movies = request_trakt("http://api.trakt.tv/user/library/movies/$apiName.json/$apikey/$username");
+
+		if (is_valid($movies)) {
+			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			print_movies($movies);
+			check_empty('library');
 		}
 	}
 }
@@ -312,6 +370,30 @@ function display_show_watchlist() {
 		if (is_valid($shows)) {
 			$w->result('showwatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 			print_shows($shows);
+			check_empty('watchlist');
+		}
+	}
+}
+
+/**
+ * Display movie watchlist
+ *
+ * @param $apiName - the name of the api (must bei either 'collection' or 'watched')
+ */
+function display_show_library($apiName) {
+	global $apikey, $w;
+	$options = get_post_options();
+
+	if (empty($options)) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$username = $w->get('username', 'settings.plist');
+		$shows = request_trakt("http://api.trakt.tv/user/library/shows/$apiName.json/$apikey/$username");
+
+		if (is_valid($shows)) {
+			$w->result('showlibrary', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			print_shows($shows);
+			check_empty('library');
 		}
 	}
 }
@@ -332,7 +414,7 @@ function display_episode_watchlist() {
 		if (is_valid($shows)) {
 			$w->result('episodewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 			print_episodes($eps);
-			check_empty_watchlist();
+			check_empty('watchlist');
 		}
 	}
 }
@@ -801,12 +883,14 @@ function check_empty_search() {
 
 
 /**
- * Check if watchlist was empty. If so -> display message
+ * Check if 'something' was empty. If so -> display message
+ *
+ * @param $what - some item that could be empty, used in the result string
  */
-function check_empty_watchlist() {
+function check_empty($what) {
 	global $w;
 	if (count($w->results()) == 1) {
-		$w->result('info', '', 'Your watchlist is empty.', 'Please add some items.', 'icons/info.png', 'no');
+		$w->result('info', '', 'Your '.$what.' is empty.', 'Please add some items.', 'icons/info.png', 'no');
 	}
 }
 
