@@ -661,11 +661,12 @@ function display_show_epguide() {
 
 	if (is_valid($show)) {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
-		foreach($show->seasons as $season):
-			foreach($season->episodes as $episode):
+		foreach ($show->seasons as $season) {
+			foreach ($season->episodes as $episode) {
+				_debug(json_encode($episode));
 				$w->result('epguide', '', $season->season.'x'.sprintf('%02d', $episode->episode).': '.$episode->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $episode->first_aired), 'Rating' => $episode->ratings->percentage)), 'icons/episode.png', 'no', $episodePrefix.$id.':'.$episode->season.':'.$episode->episode.':summary');
-			endforeach;
-		endforeach;
+			}
+		}
 	}
 	$w->sortresults('title', false);
 }
@@ -679,11 +680,11 @@ function display_show_cast() {
 
 	if (is_valid($show)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
-		foreach($show->people->actors as $actor):
+		foreach ($show->people->actors as $actor) {
 			if (!empty($actor->character) && !empty($actor->name)) {
 				$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
 			}
-		endforeach;
+		}
 	}
 }
 
@@ -696,20 +697,20 @@ function display_movie_cast() {
 
 	if (is_valid($movie)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $moviePrefix.$id.':summary');
-		foreach($movie->people->actors as $actor):
+		foreach ($movie->people->actors as $actor) {
 			if (!empty($actor->character) && !empty($actor->name)) {
 				$w->result('cast', '', $actor->character, $actor->name, 'icons/actor.png', 'no');
 			}
-		endforeach;
-		foreach($movie->people->directors as $director):
+		}
+		foreach ($movie->people->directors as $director) {
 			$w->result('cast', '', $director->name, 'Director', 'icons/othercast.png', 'no');
-		endforeach;
-		foreach($movie->people->writers as $writer):
+		}
+		foreach ($movie->people->writers as $writer) {
 			$w->result('cast', '', $writer->name, 'Writer', 'icons/othercast.png', 'no');
-		endforeach;
-		foreach($movie->people->producers as $producer):
+		}
+		foreach ($movie->people->producers as $producer) {
 			$w->result('cast', '', $producer->name, 'Producer', 'icons/othercast.png', 'no');
-		endforeach;
+		}
 	}
 }
 
@@ -733,9 +734,9 @@ function display_count($count, $msg='Total') {
  */
 function print_movies($movies) {
 	global $w, $moviePrefix;
-	foreach($movies as $movie):
+	foreach ($movies as $movie) {
 		$w->result('movie', '', $movie->title, handle_multiple_information(array('Rating' => $movie->ratings->percentage, 'Year' => $movie->year, 'Genres' => implode(', ', $movie->genres))), 'icon.png', 'no', $moviePrefix.$movie->imdb_id.':summary');
-	endforeach;
+	}
 }
 
 /**
@@ -745,9 +746,9 @@ function print_movies($movies) {
  */
 function print_shows($shows) {
 	global $w, $showPrefix;
-	foreach($shows as $show):
+	foreach ($shows as $show) {
 		$w->result('show', '', $show->title, handle_multiple_information(array('Rating' => $show->ratings->percentage, 'Year' => $show->year, 'Network' => $show->network, 'Genres' => implode(', ', $show->genres))), 'icon.png', 'no', $showPrefix.$show->imdb_id.':summary');
-	endforeach;
+	}
 }
 
 /**
@@ -758,11 +759,11 @@ function print_shows($shows) {
 function print_episodes($shows) {
 	date_default_timezone_set('UTC');
 	global $w, $episodePrefix;
-	foreach($shows as $show):
-		foreach($show->episodes as $ep):
+	foreach ($shows as $show) {
+		foreach ($show->episodes as $ep) {
 			$w->result('episode', '', $ep->season.'x'.sprintf('%02d', $ep->number).': '.$ep->title.' ('.date('Y', $ep->first_aired).')', $show->title, 'icon.png', 'no', $episodePrefix.$show->imdb_id.':'.$ep->season.':'.$ep->number.':summary');
-		endforeach;
-	endforeach;
+		}
+	}
 }
 
 /**
@@ -773,14 +774,14 @@ function print_episodes($shows) {
 function get_main_cast($item) {
 	$result = array();
 	$cnt = 0;
-	foreach($item->people->actors as $actor):
+	foreach ($item->people->actors as $actor) {
 		if ($cnt < 2) {
 			if (!empty($actor->character) && !empty($actor->name)) {
 				array_push($result, $actor->character.' ('.$actor->name.')');
 				$cnt++;
 			}
 		}
-	endforeach;
+	}
 
 	if (!empty($result)) {
 		return implode(', ', $result);
@@ -796,17 +797,17 @@ function count_episodes($show) {
 	$counts = array();
 	$normalCnt = 0;
 	$specialCnt = 0;
-	foreach($show->seasons as $season):
+	foreach ($show->seasons as $season) {
 		if ($season->season > 0) {
-			foreach($season->episodes as $episode):
+			foreach ($season->episodes as $episode) {
 				$normalCnt++;
-			endforeach;
+			}
 		} else {
-			foreach($season->episodes as $episode):
+			foreach ($season->episodes as $episode) {
 				$specialCnt++;
-			endforeach;
+			}
 		}
-	endforeach;
+	}
 	array_push($counts, $normalCnt);
 	array_push($counts, $specialCnt);
 	return $counts;
@@ -822,9 +823,9 @@ function get_latest_episode($show) {
 	$today = new DateTime("now");
 	$latestEpisode;
 	$diff = 2147483647;
-	foreach($show->seasons as $season):
+	foreach ($show->seasons as $season) {
 		if ($season->season > 0) {
-			foreach($season->episodes as $episode):
+			foreach ($season->episodes as $episode) {
 				if (!isset($episode->first_aired_iso)) {
 					continue;
 				}
@@ -835,9 +836,9 @@ function get_latest_episode($show) {
 					$diff = $interval->days;
 					$latestEpisode = $episode;
 				}
-			endforeach;
+			}
 		}
-	endforeach;
+	}
 	if (isset($latestEpisode)) {
 		return $latestEpisode;
 	}
@@ -851,8 +852,8 @@ function get_latest_episode($show) {
 function handle_multiple_information($infos) {
 	$separator = ', ';
 	$result;
-	foreach($infos as $key => $value):
-		if (!empty($value)) {
+	foreach ($infos as $key => $value) {
+		if (isset($value) && !empty($value)) {
 			$result = $result.$separator;
 			$result = $result.$key.': '.$value;
 			
@@ -863,7 +864,7 @@ function handle_multiple_information($infos) {
 				$result = $result.'min';
 			}
 		}
-	endforeach;
+	}
 	return trim($result, $separator);
 }
 
@@ -950,14 +951,14 @@ function check_empty($what) {
  *
  * @param $what - object to log
  */
-function _debuglog($what) {
+function _debug($what) {
 	global $w, $debugEnabled;
 	date_default_timezone_set('UTC');
 	$fileName = 'debug.log';
 	if ($debugEnabled) {
-		$w->write(date('Y-m-d G:i:s').' -- ', $fileName);
-		$w->write($what,  $fileName);
-		$w->write(PHP_EOL, $fileName);
+		$w->write(date('Y-m-d G:i:s').' -- ', $fileName, FILE_APPEND);
+		$w->write($what,  $fileName, FILE_APPEND);
+		$w->write(PHP_EOL, $fileName, FILE_APPEND);
 	}
 }
 
