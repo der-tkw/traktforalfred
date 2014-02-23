@@ -6,6 +6,17 @@
 	<string>de.timbooo.traktforalfred</string>
 	<key>connections</key>
 	<dict>
+		<key>02E5C931-7318-470A-94EE-F76CAE18A560</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<array>
 			<dict>
@@ -94,6 +105,8 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>8DCFB11F-591C-4E73-A169-9C269926F37D</key>
+		<array/>
 		<key>B185FFEE-9745-445E-818C-FC6FF6CE5C3A</key>
 		<array>
 			<dict>
@@ -525,6 +538,35 @@ if (empty($username) || empty($password) || empty($apikey)) {
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>trakt-libraries</string>
+				<key>runningsubtext</key>
+				<string>Requesting movie or show library ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'libraries' '{query}'</string>
+				<key>subtext</key>
+				<string>Show your movie or show libraries from trakt.tv</string>
+				<key>title</key>
+				<string>Trakt Libraries</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>02E5C931-7318-470A-94EE-F76CAE18A560</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>escaping</key>
 				<integer>36</integer>
@@ -558,6 +600,11 @@ echo $w-&gt;toxml();
 	<string>https://github.com/timbooo/traktforalfred/blob/master/README.md</string>
 	<key>uidata</key>
 	<dict>
+		<key>02E5C931-7318-470A-94EE-F76CAE18A560</key>
+		<dict>
+			<key>ypos</key>
+			<real>890</real>
+		</dict>
 		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<dict>
 			<key>ypos</key>
@@ -616,7 +663,7 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>890</real>
+			<real>1000</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>
