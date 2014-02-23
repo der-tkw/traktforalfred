@@ -25,7 +25,7 @@ if (!$apikey) {
 } else {
 	if (strpos($query, $showPrefix) === 0) {
 		// this is a show
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$id = $queryArray[1];
 		$operation = $queryArray[2];
 
@@ -46,7 +46,7 @@ if (!$apikey) {
 		}
 	} else if (strpos($query, $moviePrefix) === 0) {
 		// this is a movie
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$id = $queryArray[1];
 		$operation = $queryArray[2];
 
@@ -71,7 +71,7 @@ if (!$apikey) {
 		}
 	} else if (strpos($query, $episodePrefix) === 0) {
 		// this is an episode
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$id = $queryArray[1];
 		$season = $queryArray[2];
 		$episode = $queryArray[3];
@@ -95,7 +95,7 @@ if (!$apikey) {
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
 		// this is a trend
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$trendMode = $queryArray[1];
 
 		switch ($trendMode) {
@@ -108,7 +108,7 @@ if (!$apikey) {
 		}
 	} else if (strpos($query, $watchlistPrefix) === 0) {
 		// this is a watchlist
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$watchlistMode = $queryArray[1];
 
 		switch ($watchlistMode) {
@@ -124,7 +124,7 @@ if (!$apikey) {
 		}
 	} else if (strpos($query, $libraryPrefix) === 0) {
 		// this is a library
-		$queryArray = explode(":", $query);
+		$queryArray = explode(':', $query);
 		$libraryType = $queryArray[1];
 
 		switch ($libraryType) {
@@ -471,7 +471,7 @@ function display_show_summary() {
 			$title = $title.' ('.$show->year;
 		} else {
 			// remove trailing parenthesis
-			$title = rtrim($title, ")");
+			$title = rtrim($title, ')');
 		}
 		// add end year in case the show ended
 		if (isset($latestEp) && $show->status == 'Ended') {
@@ -776,7 +776,7 @@ function get_main_cast($item) {
 	endforeach;
 
 	if (!empty($result)) {
-		return implode(", ", $result);
+		return implode(', ', $result);
 	}
 }
 
