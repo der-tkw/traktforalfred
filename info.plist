@@ -155,7 +155,7 @@
 	<key>createdby</key>
 	<string>Tim Weller</string>
 	<key>description</key>
-	<string>Search for shows, movies, get episode guides, cast lists etc.</string>
+	<string>Search trakt.tv, check out trends or manager your watchlists and libraries...</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
