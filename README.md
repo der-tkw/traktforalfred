@@ -98,6 +98,12 @@
 ##### Watchlist Episodes (empty)
 ![Trends][screenshot_watchlist_episodes]
 
+##### Libraries
+![Trends][screenshot_libraries]
+
+##### Libraries Watched Shows
+![Trends][screenshot_libraries_watchedshows]
+
 ##### Search Shows
 ![Search][screenshot_search_shows]
 
@@ -158,3 +164,5 @@
 [screenshot_workflow]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/workflow.png
 [screenshot_options_movie]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/options_movie.png
 [screenshot_options_episode]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/options_episode.png
+[screenshot_libraries]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/libraries.png
+[screenshot_libraries_watchedshows]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/libraries_watchedshows.png
