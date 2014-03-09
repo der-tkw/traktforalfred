@@ -159,6 +159,9 @@ if (!$apikey) {
 			case 'movies':
 				search_movies();
 				break;
+			case 'upcoming':
+				display_upcoming_shows();
+				break;
 		}
 	}
 }
@@ -244,6 +247,53 @@ function display_show_trends() {
 	if (is_valid($shows)) {
 		$w->result('showtrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 		print_shows($shows);
+	}
+}
+
+/**
+ * Display upcoming shows
+ */
+function display_upcoming_shows() {
+	global $apikey, $w;
+	if (!is_authenticated()) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$titles = get_all_library_shows();
+		$today = date('Ymd');
+		$days = request_trakt("http://api.trakt.tv/calendar/shows.json/$apikey/$today/7");
+	
+		if (is_valid($days)) {
+			$cnt = 0;
+			foreach ($days as $day) {
+				foreach ($day->episodes as $eps) {
+					if (in_array($eps->show->title, $titles)) {
+						$cnt++;
+						print_episode($eps->show, $eps->episode);
+					}
+				}
+			}
+			if ($cnt == 0) {
+				$w->result('info', '', 'No upcoming shows.', 'Add some shows to your collection.', 'icons/info.png', 'no');
+			}
+		}
+	}
+}
+
+/**
+ * Get all library shows
+ */
+function get_all_library_shows() {
+	global $apikey, $w;
+	if (!is_authenticated()) {
+		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	} else {
+		$username = $w->get('username', 'settings.plist');
+		$shows = request_trakt("http://api.trakt.tv/user/library/shows/all.json/$apikey/$username");
+		$titles = array();
+		foreach ($shows as $show) {
+			array_push($titles, $show->title);
+		}
+		return $titles;
 	}
 }
 

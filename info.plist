@@ -30,6 +30,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>17966FD3-FE75-41F1-9FDB-8F18288AEFCF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<array>
 			<dict>
@@ -573,6 +584,35 @@ if (empty($username) || empty($password) || empty($apikey)) {
 				<key>escaping</key>
 				<integer>36</integer>
 				<key>keyword</key>
+				<string>trakt-upcoming</string>
+				<key>runningsubtext</key>
+				<string>Requesting upcoming episodes ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'upcoming' '{query}'</string>
+				<key>subtext</key>
+				<string>Display upcoming episodes from trakt.tv</string>
+				<key>title</key>
+				<string>Trakt Upcoming Episodes</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>17966FD3-FE75-41F1-9FDB-8F18288AEFCF</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
 				<string>trakt-version</string>
 				<key>script</key>
 				<string>require('workflows.php');
@@ -611,6 +651,11 @@ echo $w-&gt;toxml();
 		<dict>
 			<key>ypos</key>
 			<real>560</real>
+		</dict>
+		<key>17966FD3-FE75-41F1-9FDB-8F18288AEFCF</key>
+		<dict>
+			<key>ypos</key>
+			<real>1000</real>
 		</dict>
 		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<dict>
@@ -665,7 +710,7 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>1000</real>
+			<real>1110</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>
