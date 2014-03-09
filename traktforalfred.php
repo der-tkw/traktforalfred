@@ -673,8 +673,8 @@ function display_show_epguide() {
 	if (is_valid($show)) {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
 		foreach ($show->seasons as $season) {
-			foreach ($season->episodes as $episode) {
-				$w->result('epguide', '', $season->season.'x'.sprintf('%02d', $episode->episode).': '.$episode->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $episode->first_aired), 'Rating' => $episode->ratings->percentage)), 'icons/episode.png', 'no', $episodePrefix.$id.':'.$episode->season.':'.$episode->episode.':summary');
+			foreach ($season->episodes as $ep) {
+				$w->result('epguide', '', $season->season.'x'.sprintf('%02d', $ep->episode).': '.$ep->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $ep->first_aired), 'Rating' => $ep->ratings->percentage)), 'icons/episode.png', 'no', $episodePrefix.$id.':'.$ep->season.':'.$ep->episode.':summary');
 			}
 		}
 	}
@@ -767,12 +767,22 @@ function print_shows($shows) {
  * @param $shows - the show wrappers
  */
 function print_episodes($shows) {
-	global $w, $episodePrefix;
 	foreach ($shows as $show) {
 		foreach ($show->episodes as $ep) {
-			$w->result('episode', '', $ep->season.'x'.sprintf('%02d', $ep->number).': '.$ep->title.' ('.date('Y', $ep->first_aired).')', $show->title, 'icon.png', 'no', $episodePrefix.$show->imdb_id.':'.$ep->season.':'.$ep->number.':summary');
+			print_episode($show, $ep);
 		}
 	}
+}
+
+/**
+ * Print the specified episode
+ *
+ * @param $show - the show
+ * @param $ep - the episode
+ */
+function print_episode($show, $ep) {
+	global $w, $episodePrefix;
+	$w->result('episode', '', $ep->season.'x'.sprintf('%02d', $ep->number).': '.$ep->title, handle_multiple_information(array('Show' => $show->title, 'Air Date' => date('Y-m-d', $ep->first_aired), 'Rating' => $ep->ratings->percentage)), 'icon.png', 'no', $episodePrefix.$show->imdb_id.':'.$ep->season.':'.$ep->number.':summary');
 }
 
 /**
