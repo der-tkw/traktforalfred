@@ -70,11 +70,14 @@
  - `trakt-movies thor` will search for movies containing the name *thor*
 
 ### Version
-1.4
+1.5 beta
 
 ### Thanks
  - [David Ferguson] for creating [Workflows]
  - [@iconmonstr] for the [icons]
+
+### License
+Copyright (c) 2013-2014 Tim Weller. See the LICENSE file for license rights and limitations (MIT).
 
 ### Screenshots
 ##### Trends
