@@ -465,7 +465,6 @@ function display_show_summary() {
 		$count = count_episodes($show);
 		$maincast = get_main_cast($show);
 		$latestEp = get_latest_episode($show);
-		$trailer = str_replace(' ', '+', $show->title.' trailer');
 
 		$title = $show->title;
 		// add year only if the titles doesn't already end with a year (just a simple/lazy check for closing parenthesis)
@@ -512,8 +511,8 @@ function display_show_summary() {
 		$w->result('summary', '', handle_multiple_information(array('Network' => $show->network, 'Status' => $show->status)), handle_multiple_information(array('Air Day' => $show->air_day, 'Air Time' => $show->air_time)), 'icons/network.png', 'no');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
 		$w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
-		$w->result('summary', "http://www.imdb.com/title/$id/", 'View on IMDB', '', 'icons/external.png');
-		$w->result('summary', "https://www.youtube.com/results?search_query=$trailer", 'Search for a trailer on YouTube', '', 'icons/external.png');
+		$w->result('summary', 'http://www.imdb.com/title/'.$id, 'View on IMDB', '', 'icons/external.png');
+		$w->result('summary', 'https://www.youtube.com/results?search_query='.str_replace(' ', '+', $show->title.' trailer'), 'Search for a trailer on YouTube', '', 'icons/external.png');
 	}
 }
 
