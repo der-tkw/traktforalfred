@@ -434,7 +434,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 				<key>script</key>
 				<string>php -f traktforalfred.php -- 'trends' '{query}'</string>
 				<key>subtext</key>
-				<string>Show trending shows or movies from trakt.tv</string>
+				<string>Display trending shows or movies from trakt.tv</string>
 				<key>title</key>
 				<string>Trakt Trends</string>
 				<key>type</key>
@@ -521,7 +521,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 				<key>script</key>
 				<string>php -f traktforalfred.php -- 'watchlists' '{query}'</string>
 				<key>subtext</key>
-				<string>Show your movie or show watchlists from trakt.tv</string>
+				<string>Display your movie or show watchlists from trakt.tv</string>
 				<key>title</key>
 				<string>Trakt Watchlists</string>
 				<key>type</key>
@@ -550,7 +550,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 				<key>script</key>
 				<string>php -f traktforalfred.php -- 'libraries' '{query}'</string>
 				<key>subtext</key>
-				<string>Show your movie or show libraries from trakt.tv</string>
+				<string>Display your movie or show libraries from trakt.tv</string>
 				<key>title</key>
 				<string>Trakt Libraries</string>
 				<key>type</key>
