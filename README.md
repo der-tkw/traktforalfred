@@ -3,6 +3,7 @@
 
 ### Features
 #### General Features
+ - Display upcoming shows of the next 7 days
  - Display trends (shows and movies)
  - Display watchlists (shows, movies and episodes)
  - Display your libraries (collected/watched shows and movies)
@@ -63,6 +64,7 @@
  - `trakt-version` will show the current version
 
 ### General Commands
+ - `trakt-upcoming` will display the upcoming shows of the next 7 days
  - `trakt-trends` will show the current trending options
  - `trakt-watchlists` will show the current watchlist options
  - `trakt-libraries` will show the current watchlist options
