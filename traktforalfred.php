@@ -175,8 +175,17 @@ echo $w->toxml();
 function request_trakt($url, $payload=null) {
 	global $w;
 	$options = get_post_options($payload);
-	$result = $w->request($url, $options);
-	return json_decode($result);
+	$response = $w->request($url, $options);
+	if (empty($response)) {
+		$w->result('', '', 'Error', 'Trakt returned some invalid data. Please try again.', 'icons/error.png', 'no');
+	} else {
+		$result = json_decode($response);
+		if (json_last_error() != JSON_ERROR_NONE) {
+			// adapt to trakt error objects and set error to curl error output
+			$result = (object) array('status' => 'failure', 'error' => $response);
+		}
+		return $result;
+	}
 }
 
 /**
