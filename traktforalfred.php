@@ -22,7 +22,7 @@ $episodePrefix = 'e:';
 $libraryPrefix = 'l:';
 
 if (!$apikey) {
-	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'apikey\'.', 'icons/error.png', 'no');
+	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'trakt-apikey\'.', 'icons/error.png', 'no');
 } else {
 	if (strpos($query, $showPrefix) === 0) {
 		// this is a show
