@@ -169,6 +169,7 @@ echo $w->toxml();
  * Request trakt api
  *
  * @param $url - the url
+ * @param $payload - the optional POST body payload
  * @return the result object
  */
 function request_trakt($url, $payload=null) {
@@ -870,7 +871,7 @@ function handle_multiple_information($infos) {
 /**
  * Get the post options. Returns array with some POST options and the username and password if not empty.
  * Otherwise an empty array will be returned.
-
+ *
  * @param $payload - the optional POST body payload
  */
 function get_post_options($payload=null) {
