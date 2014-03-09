@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>de.timbooo.traktforalfred</string>
+	<key>category</key>
+	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
 		<key>02E5C931-7318-470A-94EE-F76CAE18A560</key>
