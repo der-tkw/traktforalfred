@@ -19,22 +19,22 @@
 				<string></string>
 			</dict>
 		</array>
-		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
+		<key>072876ED-5543-4ED8-8C0F-828FB0814F00</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</string>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 			</dict>
 		</array>
-		<key>2A0025CF-12DD-4820-B53D-FA117B432F1E</key>
+		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<string>5F5EFC91-D7BE-479E-889D-0B4EE1DC8F88</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -474,7 +474,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>2A0025CF-12DD-4820-B53D-FA117B432F1E</string>
+			<string>072876ED-5543-4ED8-8C0F-828FB0814F00</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -607,15 +607,15 @@ echo $w-&gt;toxml();
 			<key>ypos</key>
 			<real>890</real>
 		</dict>
+		<key>072876ED-5543-4ED8-8C0F-828FB0814F00</key>
+		<dict>
+			<key>ypos</key>
+			<real>560</real>
+		</dict>
 		<key>182ADB84-802B-44FB-AEAE-A3D9C3544F8C</key>
 		<dict>
 			<key>ypos</key>
 			<real>230</real>
-		</dict>
-		<key>2A0025CF-12DD-4820-B53D-FA117B432F1E</key>
-		<dict>
-			<key>ypos</key>
-			<real>560</real>
 		</dict>
 		<key>3B44DF84-A58F-4BDB-96A4-56520405D6FC</key>
 		<dict>
