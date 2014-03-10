@@ -256,7 +256,7 @@ function display_show_trends() {
 function display_upcoming_shows() {
 	global $apikey, $w;
 	if (!is_authenticated()) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+		print_auth_error();
 	} else {
 		$titles = get_all_library_shows();
 		$today = date('Ymd');
@@ -285,7 +285,7 @@ function display_upcoming_shows() {
 function get_all_library_shows() {
 	global $apikey, $w;
 	if (!is_authenticated()) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$shows = request_trakt("http://api.trakt.tv/user/library/shows/all.json/$apikey/$username");
@@ -376,10 +376,9 @@ function display_library_options() {
  */
 function display_movie_watchlist() {
 	global $apikey, $w;
-	$options = get_post_options();
 
-	if (empty($options)) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	if (!is_authenticated()) {
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$movies = request_trakt("http://api.trakt.tv/user/watchlist/movies.json/$apikey/$username");
@@ -400,10 +399,9 @@ function display_movie_watchlist() {
  */
 function display_movie_library($apiName) {
 	global $apikey, $w;
-	$options = get_post_options();
 
-	if (empty($options)) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	if (!is_authenticated()) {
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$movies = request_trakt("http://api.trakt.tv/user/library/movies/$apiName.json/$apikey/$username");
@@ -422,10 +420,9 @@ function display_movie_library($apiName) {
  */
 function display_show_watchlist() {
 	global $apikey, $w;
-	$options = get_post_options();
 
-	if (empty($options)) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	if (!is_authenticated()) {
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$shows = request_trakt("http://api.trakt.tv/user/watchlist/shows.json/$apikey/$username");
@@ -446,10 +443,9 @@ function display_show_watchlist() {
  */
 function display_show_library($apiName) {
 	global $apikey, $w;
-	$options = get_post_options();
 
-	if (empty($options)) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	if (!is_authenticated()) {
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$shows = request_trakt("http://api.trakt.tv/user/library/shows/$apiName.json/$apikey/$username");
@@ -468,10 +464,9 @@ function display_show_library($apiName) {
  */
 function display_episode_watchlist() {
 	global $apikey, $w;
-	$options = get_post_options();
 
-	if (empty($options)) {
-		$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
+	if (!is_authenticated()) {
+		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
 		$eps = request_trakt("http://api.trakt.tv/user/watchlist/episodes.json/$apikey/$username");
@@ -973,6 +968,14 @@ function is_authenticated() {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Print authentication error
+ */
+function print_auth_error() {
+	global $w;
+	$w->result('error', '', 'Error', 'Please set your username and password correctly.', 'icons/error.png', 'no');
 }
 
 /**
