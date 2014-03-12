@@ -13,6 +13,7 @@ $id;
 $operation;
 $season;
 $episode;
+$rating;
 
 $showPrefix = 's:';
 $moviePrefix = 'm:';
@@ -21,6 +22,19 @@ $watchlistPrefix = 'w:';
 $episodePrefix = 'e:';
 $libraryPrefix = 'l:';
 $recommendationPrefix = 'r:';
+
+$ratingOptions = array(
+	'Totally ninja! (10)' => 10,
+	'Superb (9)' => 9,
+	'Great (8)' => 8,
+	'Good (7)' => 7,
+	'Fair (6)' => 6,
+	'Meh (5)' => 5,
+	'Poor (4)' => 4,
+	'Bad (3)' => 3,
+	'Terrible (2)' => 2,
+	'Weak sauce :( (1)' => 1
+);
 
 if (!$apikey) {
 	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'trakt-apikey\'.', 'icons/error.png', 'no');
@@ -41,9 +55,15 @@ if (!$apikey) {
 			case 'cast':
 				display_show_cast();
 				break;
+			case 'options':
+				display_show_options();
+				break;
 			case 'watchlist':
 			case 'unwatchlist':
 				handle_show_option("show/$operation");
+				break;
+			case 'rate':
+				display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
 				break;
 		}
 	} else if (strpos($query, $moviePrefix) === 0) {
@@ -69,6 +89,8 @@ if (!$apikey) {
 			case 'library':
 			case 'unlibrary':
 				handle_movie_option("movie/$operation");
+			case 'rate':
+				display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
 				break;
 		}
 	} else if (strpos($query, $episodePrefix) === 0) {
@@ -93,6 +115,9 @@ if (!$apikey) {
 			case 'library':
 			case 'unlibrary':
 				handle_episode_option("show/episode/$operation");
+				break;
+			case 'rate':
+				display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
 				break;
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
@@ -268,6 +293,20 @@ function display_show_trends() {
 }
 
 /**
+ * Display rating options
+ *
+ * @param $back - the back target
+ * @param $targetPrefix - the target prefix
+ */
+function display_rating_options($back, $targetPrefix) {
+	global $w, $showPrefix, $id, $ratingOptions;
+	$w->result('rate', '', 'Back ...', '', 'icons/back.png', 'no', $back);
+	foreach ($ratingOptions as $label => $rating) {
+		$w->result('rate', '', $label, '', 'icons/rating.png', 'no', $targetPrefix.$rating);
+	}
+}
+
+/**
  * Display upcoming shows
  */
 function display_upcoming_shows() {
@@ -323,26 +362,55 @@ function get_all_library_shows() {
  * @param $item - the item to get the user information from
  * @param $back - the back target
  * @param $targetPrefix - the target prefix
+ * @param $showWatchlist - show watchlist option (defaults to true)
+ * @param $showCollection - show collection option (defaults to true)
+ * @param $showWatched - show watched option (defaults to true)
+ * @param $showRate - show rate option (defaults to true)
  */
-function display_options($item, $back, $targetPrefix) {
+function display_options($item, $back, $targetPrefix, $showWatchlist=true, $showCollection=true, $showWatched=true, $showRate=true) {
 	global $w;
 	$w->result('back', '', 'Back ...', '', 'icons/back.png', 'no', $back);
 	if (is_valid($item)) {
-		if ($item->in_watchlist) {
-			$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $targetPrefix.':unwatchlist');
-		} else {
-			$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $targetPrefix.':watchlist');
+		if ($showWatchlist) {
+			if ($item->in_watchlist) {
+				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $targetPrefix.':unwatchlist');
+			} else {
+				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $targetPrefix.':watchlist');
+			}
 		}
-		if ($item->in_collection) {
-			$w->result('unlibrary', '', 'Remove from library', '', 'icons/libraryremove.png', 'no', $targetPrefix.':unlibrary');
-		} else {
-			$w->result('library', '', 'Add to library', '', 'icons/libraryadd.png', 'no', $targetPrefix.':library');
+		if ($showCollection) {
+			if ($item->in_collection) {
+				$w->result('unlibrary', '', 'Remove from library', '', 'icons/libraryremove.png', 'no', $targetPrefix.':unlibrary');
+			} else {
+				$w->result('library', '', 'Add to library', '', 'icons/libraryadd.png', 'no', $targetPrefix.':library');
+			}
 		}
-		if ($item->watched) {
-			$w->result('unseen', '', 'Remove seen flag', '', 'icons/seenremove.png', 'no', $targetPrefix.':unseen');
-		} else {
-			$w->result('seen', '', 'Mark as seen', '', 'icons/seenadd.png', 'no', $targetPrefix.':seen');
+		if ($showWatched) {
+			if ($item->watched) {
+				$w->result('unseen', '', 'Remove seen flag', '', 'icons/seenremove.png', 'no', $targetPrefix.':unseen');
+			} else {
+				$w->result('seen', '', 'Mark as seen', '', 'icons/seenadd.png', 'no', $targetPrefix.':seen');
+			}
 		}
+		if ($showRate) {
+			if ($item->rating_advanced == 0) {
+				$w->result('rate', '', 'Rate', '', 'icons/rating.png', 'no', $targetPrefix.':rate');
+			} else {
+				$w->result('unrate', '', 'Remove rating', '', 'icons/rating.png', 'no', $targetPrefix.':unrate');
+			}
+		}
+	}
+}
+
+/**
+ * Display show options
+ */
+function display_show_options() {
+	global $apikey, $showPrefix, $id;
+	$show = request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id");
+
+	if (is_valid($show)) {
+		display_options($show, $showPrefix.$id.':summary', $showPrefix.$id, true, false, false, true);
 	}
 }
 
@@ -625,11 +693,7 @@ function display_show_summary() {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $showPrefix.$id.':cast');
 		}
 		if (is_authenticated()) {
-			if ($show->in_watchlist) {
-				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $showPrefix.$id.':unwatchlist');
-			} else {
-				$w->result('watchlist', '', 'Add to watchlist', '', 'icons/watchlistadd.png', 'no', $showPrefix.$id.':watchlist');
-			}
+			$w->result('summary', '', 'Show Options ...', 'Watchlist/Rate', 'icons/options.png', 'no', $showPrefix.$id.':options');
 		}
 		$w->result('summary', '', handle_multiple_information(array('Network' => $show->network, 'Status' => $show->status)), handle_multiple_information(array('Air Day' => $show->air_day, 'Air Time' => $show->air_time)), 'icons/network.png', 'no');
 		$w->result('summary', '', $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
@@ -659,7 +723,7 @@ function display_movie_summary() {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $moviePrefix.$movie->imdb_id.':cast');
 		}
 		if (is_authenticated()) {
-			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen', 'icons/options.png', 'no', $moviePrefix.$movie->imdb_id.':options');
+			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $moviePrefix.$movie->imdb_id.':options');
 		}
 		$w->result('summary', '', $movie->stats->watchers.' Watchers, '.$movie->stats->plays.' Plays, '.$movie->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
 		$w->result('summary', $movie->url, 'View on trakt.tv', '', 'icons/external.png');
@@ -685,7 +749,7 @@ function display_episode_summary() {
 			$w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
 		}
 		if (is_authenticated()) {
-			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
 			$w->result('summary', '', $ep->episode->plays, 'Personal Plays', 'icons/stats.png', 'no');
 		}
 		$w->result('summary', $ep->episode->url, 'View on trakt.tv', '', 'icons/external.png');
