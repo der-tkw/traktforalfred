@@ -131,6 +131,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>B2A79A5B-A813-4427-9A85-0FB567BC6428</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
 		<array>
 			<dict>
@@ -609,6 +620,35 @@ if (empty($username) || empty($password) || empty($apikey)) {
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>18</integer>
+				<key>keyword</key>
+				<string>trakt-recommendations</string>
+				<key>runningsubtext</key>
+				<string>Requesting movie or show recommendations ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'recommendations' '{query}'</string>
+				<key>subtext</key>
+				<string>Display your movie or show recommendations from trakt.tv</string>
+				<key>title</key>
+				<string>Trakt Recommendations</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B2A79A5B-A813-4427-9A85-0FB567BC6428</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>escaping</key>
 				<integer>36</integer>
@@ -702,6 +742,11 @@ echo $w-&gt;toxml();
 			<key>ypos</key>
 			<real>340</real>
 		</dict>
+		<key>B2A79A5B-A813-4427-9A85-0FB567BC6428</key>
+		<dict>
+			<key>ypos</key>
+			<real>1110</real>
+		</dict>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
 		<dict>
 			<key>ypos</key>
@@ -710,7 +755,7 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>1110</real>
+			<real>1220</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>

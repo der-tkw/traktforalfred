@@ -20,6 +20,7 @@ $trendsPrefix = 't:';
 $watchlistPrefix = 'w:';
 $episodePrefix = 'e:';
 $libraryPrefix = 'l:';
+$recommendationPrefix = 'r:';
 
 if (!$apikey) {
 	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'trakt-apikey\'.', 'icons/error.png', 'no');
@@ -142,6 +143,19 @@ if (!$apikey) {
 				display_movie_library('collection');
 				break;
 		}
+	} else if (strpos($query, $recommendationPrefix) === 0) {
+		// this is a recommendation
+		$queryArray = explode(':', $query);
+		$recommendationPrefix = $queryArray[1];
+	
+		switch ($recommendationPrefix) {
+			case 'shows':
+				display_show_recommendations();
+				break;
+			case 'movies':
+				display_movie_recommendations();
+				break;
+		}
 	} else {
 		switch($mode) {
 			case 'trends':
@@ -152,6 +166,9 @@ if (!$apikey) {
 				break;
 			case 'libraries':
 				display_library_options();
+				break;
+			case 'recommendations':
+				display_recommendation_options();
 				break;
 			case 'shows':
 				search_shows();
@@ -369,6 +386,55 @@ function display_library_options() {
 	$w->result('library', '', 'Display collected shows ...', '', 'icons/library.png', 'no', $libraryPrefix.'collectedshows');
 	$w->result('library', '', 'Display watched movies ...', '', 'icons/library.png', 'no', $libraryPrefix.'watchedmovies');
 	$w->result('library', '', 'Display collected movies ...', '', 'icons/library.png', 'no', $libraryPrefix.'collectedmovies');
+}
+
+/**
+ * Display recommendation options
+ */
+function display_recommendation_options() {
+	global $w, $recommendationPrefix;
+	$w->result('recommendation', '', 'Display recommended shows ...', '', 'icons/recommendation.png', 'no', $recommendationPrefix.'shows');
+	$w->result('recommendation', '', 'Display recommended movies ...', '', 'icons/recommendation.png', 'no', $recommendationPrefix.'movies');
+}
+
+/**
+ * Display show recommendations
+ */
+function display_show_recommendations() {
+	global $apikey, $w;
+	
+	if (!is_authenticated()) {
+		print_auth_error();
+	} else {
+		$shows = request_trakt("http://api.trakt.tv/recommendations/shows/$apikey");
+	
+		if (is_valid($shows)) {
+			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($shows));
+			print_shows($shows);
+			check_empty('recommendation list');
+		}
+	}
+}
+
+/**
+ * Display movie recommendations
+ */
+function display_movie_recommendations() {
+	global $apikey, $w;
+
+	if (!is_authenticated()) {
+		print_auth_error();
+	} else {
+		$shows = request_trakt("http://api.trakt.tv/recommendations/shows/$apikey");
+
+		if (is_valid($shows)) {
+			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
+			display_count(count($shows));
+			print_shows($shows);
+			check_empty('recommendation list');
+		}
+	}
 }
 
 /**
@@ -594,7 +660,7 @@ function display_movie_summary() {
 		}
 		$w->result('summary', '', $movie->stats->watchers.' Watchers, '.$movie->stats->plays.' Plays, '.$movie->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
 		$w->result('summary', $movie->url, 'View on trakt.tv', '', 'icons/external.png');
-		$w->result('summary', "http://www.imdb.com/title/$movie->imdb_id/", 'View on IMDB', '', 'icons/external.png');
+		$w->result('summary', "http://www.imdb.com/title/$movie->imdb_id", 'View on IMDB', '', 'icons/external.png');
 		if (!empty($movie->trailer)) {
 			$w->result('summary', $movie->trailer, 'Watch trailer on YouTube', '', 'icons/external.png');
 		}
@@ -947,11 +1013,13 @@ function get_post_options($payload=null) {
 	}
 
 	$options = array(
-				CURLOPT_POST => 1,
-				CURLOPT_USERPWD => "$username:$password",
-				CURLOPT_POSTFIELDS => json_encode($payload),
-				CURLOPT_TIMEOUT => 30,
-				CURLOPT_RETURNTRANSFER => true);
+		CURLOPT_POST => 1,
+		CURLOPT_USERPWD => "$username:$password",
+		CURLOPT_TIMEOUT => 30,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_POSTFIELDS => json_encode($payload)
+	);
+	
 	return $options;
 }
 
