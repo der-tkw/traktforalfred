@@ -497,7 +497,7 @@ function display_movie_recommendations() {
 	if (!is_authenticated()) {
 		print_auth_error();
 	} else {
-		$shows = request_trakt("http://api.trakt.tv/recommendations/shows/$apikey");
+		$shows = request_trakt("http://api.trakt.tv/recommendations/movies/$apikey");
 
 		if (is_valid($shows)) {
 			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
