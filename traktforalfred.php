@@ -291,6 +291,9 @@ function display_upcoming_shows() {
 			}
 			if ($cnt == 0) {
 				$w->result('info', '', 'No upcoming shows.', 'Add some shows to your collection.', 'icons/info.png', 'no');
+			} else {
+				$result = display_count($cnt);
+				array_unshift($w->resultsref(), $result);
 			}
 		}
 	}
@@ -840,11 +843,12 @@ function display_movie_cast() {
  *
  * @param $count - the count
  * @param $msg - the optional message (default: 'Total')
+ * @return the added item
  */
 function display_count($count, $msg='Total') {
 	global $w;
 	if ($count > 0) {
-		$w->result('count', '', $msg.': '.$count, '', 'icons/info.png', 'no');
+		return $w->result('count', '', $msg.': '.$count, '', 'icons/info.png', 'no');
 	}
 }
 
