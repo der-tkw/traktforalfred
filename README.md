@@ -5,6 +5,7 @@
 #### General Features
  - Display upcoming shows of the next 7 days
  - Display trends (shows and movies)
+ - Display recommendations (shows and movies)
  - Display watchlists (shows, movies and episodes)
  - Display your libraries (collected/watched shows and movies)
  - Display version number
@@ -19,6 +20,7 @@
     - Network info
     - trakt.tv Stats
  - Add/Remove to/from watchlist
+ - Rate/Unrate
  - Search trailer on YouTube
  - View on IMDB
  - View on trakt.tv
@@ -35,6 +37,7 @@
  - Mark/Unmark as seen
  - Add/Remove to/from watchlist
  - Add/Remove to/from library
+ - Rate/Unrate
 
 #### Movie Features
  - Summary
@@ -49,6 +52,7 @@
  - Mark/Unmark as seen
  - Add/Remove to/from watchlist
  - Add/Remove to/from library
+ - Rate/Unrate
 
 ### Notes
  - You need a trakt.tv account for this workflow to work completely (some keywords will work partly/without authentication).
@@ -66,6 +70,7 @@
 ### General Commands
  - `trakt-upcoming` will display the upcoming shows of the next 7 days
  - `trakt-trends` will show the current trending options
+ - `trakt-recommendations` will show the current recommendation options
  - `trakt-watchlists` will show the current watchlist options
  - `trakt-libraries` will show the current watchlist options
  - `trakt-shows breaking` will search for shows containing the name *breaking*
