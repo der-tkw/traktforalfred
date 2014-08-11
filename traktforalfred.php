@@ -3,6 +3,8 @@
 date_default_timezone_set('UTC');
 require('workflows.php');
 $w = new Workflows();
+
+$baseurl = 'https://api.trakt.tv/';
 $apikey = $w->get('apikey', 'settings.plist');
 $mode = $argv[1];
 $query = $argv[2];
@@ -246,7 +248,8 @@ echo $w->toxml();
  * @return the result object
  */
 function request_trakt($url, $payload=null) {
-	global $w;
+	global $w, $baseurl;
+    $url = $baseurl.$url;
 	$options = get_post_options($payload);
     _debug('REQUEST URL: '.$url);
     //_debug('REQUEST OPTIONS: '.print_r($options, true));
@@ -269,7 +272,7 @@ function request_trakt($url, $payload=null) {
  */
 function get_movie() {
 	global $id, $apikey;
-	return request_trakt("http://api.trakt.tv/movie/summary.json/$apikey/$id");
+	return request_trakt("movie/summary.json/$apikey/$id");
 }
 
 /**
@@ -277,7 +280,7 @@ function get_movie() {
  */
 function get_show() {
 	global $id, $apikey;
-	return request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id/extended");
+	return request_trakt("show/summary.json/$apikey/$id/extended");
 }
 
 /**
@@ -285,7 +288,7 @@ function get_show() {
  */
 function get_episode() {
 	global $id, $apikey, $season, $episode;
-	return request_trakt("http://api.trakt.tv/show/episode/summary.json/$apikey/$id/$season/$episode");
+	return request_trakt("show/episode/summary.json/$apikey/$id/$season/$episode");
 }
 
 /**
@@ -302,7 +305,7 @@ function display_trend_options() {
  */
 function display_movie_trends() {
 	global $apikey, $w;
-	$movies = request_trakt("http://api.trakt.tv/movies/trending.json/$apikey");
+	$movies = request_trakt("movies/trending.json/$apikey");
 
 	if (is_valid($movies)) {
 		$w->result('movietrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -315,7 +318,7 @@ function display_movie_trends() {
  */
 function display_show_trends() {
 	global $apikey, $w;
-	$shows = request_trakt("http://api.trakt.tv/shows/trending.json/$apikey");
+	$shows = request_trakt("shows/trending.json/$apikey");
 
 	if (is_valid($shows)) {
 		$w->result('showtrends', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -346,7 +349,7 @@ function display_upcoming_shows() {
 		print_auth_error();
 	} else {
         $username = $w->get('username', 'settings.plist');
-		$days = request_trakt("http://api.trakt.tv/user/calendar/shows.json/$apikey/$username");
+		$days = request_trakt("user/calendar/shows.json/$apikey/$username");
 
 		if (is_valid($days)) {
             $cnt = 0;
@@ -418,10 +421,10 @@ function display_options($item, $back, $targetPrefix, $showWatchlist=true, $show
  */
 function display_show_options() {
 	global $apikey, $showPrefix, $id;
-	$show = request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id");
+	$show = request_trakt("show/summary.json/$apikey/$id");
 
 	if (is_valid($show)) {
-		display_options($show, $showPrefix.$id.':summary', $showPrefix.$id, true, false, false, true);
+		display_options('show', $show, $showPrefix.$id.':summary', $showPrefix.$id, true, false, false, true, false);
 	}
 }
 
@@ -430,7 +433,7 @@ function display_show_options() {
  */
 function display_movie_options() {
 	global $apikey, $moviePrefix, $id;
-	$movie = request_trakt("http://api.trakt.tv/movie/summary.json/$apikey/$id");
+	$movie = request_trakt("movie/summary.json/$apikey/$id");
 
 	if (is_valid($movie)) {
 		display_options($movie, $moviePrefix.$id.':summary', $moviePrefix.$id);
@@ -442,7 +445,7 @@ function display_movie_options() {
  */
 function display_episode_options() {
 	global $apikey, $episodePrefix, $id, $season, $episode;
-	$ep = request_trakt("http://api.trakt.tv/show/episode/summary.json/$apikey/$id/$season/$episode");
+	$ep = request_trakt("show/episode/summary.json/$apikey/$id/$season/$episode");
 
 	if (is_valid($ep->episode)) {
 		display_options($ep->episode, $episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode);
@@ -488,7 +491,7 @@ function display_show_recommendations() {
 	if (!is_authenticated()) {
 		print_auth_error();
 	} else {
-		$shows = request_trakt("http://api.trakt.tv/recommendations/shows/$apikey");
+		$shows = request_trakt("recommendations/shows/$apikey");
 
 		if (is_valid($shows)) {
 			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -508,7 +511,7 @@ function display_movie_recommendations() {
 	if (!is_authenticated()) {
 		print_auth_error();
 	} else {
-		$shows = request_trakt("http://api.trakt.tv/recommendations/movies/$apikey");
+		$shows = request_trakt("recommendations/movies/$apikey");
 
 		if (is_valid($shows)) {
 			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -529,7 +532,7 @@ function display_movie_watchlist() {
 		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
-		$movies = request_trakt("http://api.trakt.tv/user/watchlist/movies.json/$apikey/$username");
+		$movies = request_trakt("user/watchlist/movies.json/$apikey/$username");
 
 		if (is_valid($movies)) {
 			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -552,7 +555,7 @@ function display_movie_library($apiName) {
 		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
-		$movies = request_trakt("http://api.trakt.tv/user/library/movies/$apiName.json/$apikey/$username");
+		$movies = request_trakt("user/library/movies/$apiName.json/$apikey/$username");
 
 		if (is_valid($movies)) {
 			$w->result('moviewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -573,7 +576,7 @@ function display_show_watchlist() {
 		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
-		$shows = request_trakt("http://api.trakt.tv/user/watchlist/shows.json/$apikey/$username");
+		$shows = request_trakt("user/watchlist/shows.json/$apikey/$username");
 
 		if (is_valid($shows)) {
 			$w->result('showwatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -596,7 +599,7 @@ function display_show_library($apiName) {
 		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
-		$shows = request_trakt("http://api.trakt.tv/user/library/shows/$apiName.json/$apikey/$username");
+		$shows = request_trakt("user/library/shows/$apiName.json/$apikey/$username");
 
 		if (is_valid($shows)) {
 			$w->result('showlibrary', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -617,7 +620,7 @@ function display_episode_watchlist() {
 		print_auth_error();
 	} else {
 		$username = $w->get('username', 'settings.plist');
-		$eps = request_trakt("http://api.trakt.tv/user/watchlist/episodes.json/$apikey/$username");
+		$eps = request_trakt("user/watchlist/episodes.json/$apikey/$username");
 
 		if (is_valid($eps)) {
 			$w->result('episodewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
@@ -633,7 +636,7 @@ function display_episode_watchlist() {
  */
 function search_shows() {
 	global $apikey, $query;
-	$shows = request_trakt("http://api.trakt.tv/search/shows.json/$apikey?query=$query");
+	$shows = request_trakt("search/shows.json/$apikey?query=$query");
 
 	if (is_valid($shows)) {
 		display_count(count($shows));
@@ -647,7 +650,7 @@ function search_shows() {
  */
 function search_movies() {
 	global $apikey, $query;
-	$movies = request_trakt("http://api.trakt.tv/search/movies.json/$apikey?query=$query");
+	$movies = request_trakt("search/movies.json/$apikey?query=$query");
 
 	if (is_valid($movies)) {
 		display_count(count($movies));
@@ -804,7 +807,7 @@ function handle_episode_option($apiName) {
 	$ep = get_episode();
 	$item = array('season' => $season, 'episode' => $episode);
 	$additional = array('imdb_id' => $ep->show->imdb_id, 'tvdb_id' => $ep->show->tvdb_id, 'title' => $ep->show->title, 'year' => $ep->show->year, 'episodes' => array($item));
-	$result = request_trakt("http://api.trakt.tv/$apiName/$apikey", $additional);
+	$result = request_trakt("$apiName/$apikey", $additional);
 
 	$w->result($apiName, '', 'Back ...', '', 'icons/back.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':summary');
 	if (is_valid($result)) {
@@ -821,7 +824,7 @@ function handle_episode_option($apiName) {
  */
 function handle_option($apiName, $target, $additional) {
 	global $apikey, $w;
-	$result = request_trakt("http://api.trakt.tv/$apiName/$apikey", $additional);
+	$result = request_trakt("$apiName/$apikey", $additional);
 
 	$w->result($apiName, '', 'Back ...', '', 'icons/back.png', 'no', $target);
 	if (is_valid($result)) {
@@ -853,7 +856,7 @@ function handle_rating($type, $target) {
             break;
     }
 
-	$result = request_trakt("http://api.trakt.tv/rate/$type/$apikey", $additional);
+	$result = request_trakt("rate/$type/$apikey", $additional);
 
 	$w->result($type, '', 'Back ...', '', 'icons/back.png', 'no', $target);
 	if (is_valid($result)) {
@@ -893,7 +896,7 @@ function get_ok_message($msgArray) {
  */
 function display_show_epguide() {
 	global $apikey, $w, $id, $showPrefix, $episodePrefix;
-	$show = request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id/extended");
+	$show = request_trakt("show/summary.json/$apikey/$id/extended");
 
 	if (is_valid($show)) {
 		$w->result('epguide', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
@@ -911,7 +914,7 @@ function display_show_epguide() {
  */
 function display_show_cast() {
 	global $apikey, $w, $id, $showPrefix;
-	$show = request_trakt("http://api.trakt.tv/show/summary.json/$apikey/$id/extended");
+	$show = request_trakt("show/summary.json/$apikey/$id/extended");
 
 	if (is_valid($show)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $showPrefix.$id.':summary');
@@ -928,7 +931,7 @@ function display_show_cast() {
  */
 function display_movie_cast() {
 	global $apikey, $w, $id, $moviePrefix;
-	$movie = request_trakt("http://api.trakt.tv/movie/summary.json/$apikey/$id");
+	$movie = request_trakt("movie/summary.json/$apikey/$id");
 
 	if (is_valid($movie)) {
 		$w->result('cast', '', 'Back ...', '', 'icons/back.png', 'no', $moviePrefix.$id.':summary');
