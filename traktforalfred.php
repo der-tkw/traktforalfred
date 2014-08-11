@@ -65,7 +65,7 @@ if (!$apikey) {
 				handle_show_option("show/$operation");
 				break;
 			case 'rate':
-				if (count($queryArray) == 4) {
+				if (count($queryArray) === 4) {
 					$rating = $queryArray[3];
 					handle_rating('show', $showPrefix.$id.':options');
 				} else {
@@ -102,7 +102,7 @@ if (!$apikey) {
 				handle_movie_option("movie/$operation");
                 break;
             case 'rate':
-                if (count($queryArray) == 4) {
+                if (count($queryArray) === 4) {
                     $rating = $queryArray[3];
                     handle_rating('movie', $moviePrefix.$id.':options');
                 } else {
@@ -138,7 +138,7 @@ if (!$apikey) {
 				handle_episode_option("show/episode/$operation");
 				break;
             case 'rate':
-                if (count($queryArray) == 6) {
+                if (count($queryArray) === 6) {
                     $rating = $queryArray[5];
                     handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
                 } else {
@@ -356,7 +356,7 @@ function display_upcoming_shows() {
             foreach ($days as $day) {
                 $cnt = $cnt + count($day->episodes);
             }
-			if ($cnt == 0) {
+			if ($cnt === 0) {
 				$w->result('info', '', 'No upcoming shows.', 'Add some shows to your collection.', 'icons/info.png', 'no');
 			} else {
                 display_count($cnt);
@@ -407,7 +407,7 @@ function display_options($item, $back, $targetPrefix, $showWatchlist=true, $show
 			}
 		}
 		if ($showRate) {
-			if ($item->rating_advanced == 0) {
+			if ($item->rating_advanced === 0) {
 				$w->result('rate', '', 'Rate', '', 'icons/rating.png', 'no', $targetPrefix.':rate');
 			} else {
 				$w->result('unrate', '', 'Remove rating', '', 'icons/rating.png', 'no', $targetPrefix.':unrate');
@@ -680,7 +680,7 @@ function display_show_summary() {
 			$title = rtrim($title, ')');
 		}
 		// add end year in case the show ended
-		if (isset($latestEp) && $show->status == 'Ended') {
+		if (isset($latestEp) && $show->status === 'Ended') {
 			$title = $title.'-'.date('Y', $latestEp->first_aired);
 		} else {
 			// no end year available, just add a hyphen and space to indicate progress
@@ -1066,6 +1066,7 @@ function count_episodes($show) {
  * Find the latest episode for the specified show
  *
  * @param $show - the show
+ * @return the latest episode
  */
 function get_latest_episode($show) {
 	$today = new DateTime("now");
@@ -1080,7 +1081,7 @@ function get_latest_episode($show) {
 				$epdate = new DateTime(explode('T', $episode->first_aired_iso)[0]);
 				$interval = $today->diff($epdate);
 				// only continue if interval is negative (in the past)
-				if ($interval->invert == 1 && $interval->days <= $diff) {
+				if ($interval->invert === 1 && $interval->days <= $diff) {
 					$diff = $interval->days;
 					$latestEpisode = $episode;
 				}
@@ -1107,9 +1108,9 @@ function handle_multiple_information($infos) {
 			$result = $result.$key.': '.$value;
 
 			// handle eventual suffixes
-			if ($key == 'Rating') {
+			if ($key === 'Rating') {
 				$result = $result.'%';
-			} else if ($key == 'Runtime') {
+			} else if ($key === 'Runtime') {
 				$result = $result.'min';
 			}
 		}
@@ -1175,7 +1176,7 @@ function print_auth_error() {
  */
 function is_valid($response) {
 	global $w;
-	if (isset($response->status) && $response->status == 'failure') {
+	if (isset($response->status) && $response->status === 'failure') {
 		$w->result('error', '', 'Error', $response->error, 'icons/error.png', 'no');
 		return false;
 	}
@@ -1188,7 +1189,7 @@ function is_valid($response) {
  */
 function check_empty_search() {
 	global $w;
-	if (count($w->results()) == 0) {
+	if (count($w->results()) === 0) {
 		$w->result('info', '', 'No results.', 'Please widen your search.', 'icons/info.png', 'no');
 	}
 }
@@ -1201,7 +1202,7 @@ function check_empty_search() {
  */
 function check_empty($what) {
 	global $w;
-	if (count($w->results()) == 1) {
+	if (count($w->results()) === 1) {
 		$w->result('info', '', 'Your '.$what.' is empty.', 'Please add some items.', 'icons/info.png', 'no');
 	}
 }
