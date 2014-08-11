@@ -161,18 +161,6 @@ class Workflows {
 
 	/**
 	* Description:
-	* Returns a reference of an array of available result items
-	*
-	* @param none
-	* @return array - list of result items
-	*/
-	public function &resultsref()
-	{
-		return $this->results;
-	}
-
-	/**
-	* Description:
 	* Convert an associative array into XML format
 	*
 	* @param $a - An associative array to convert

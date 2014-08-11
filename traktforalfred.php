@@ -255,6 +255,7 @@ function request_trakt($url, $payload=null) {
 		$w->result('', '', 'Error', 'Trakt returned some invalid data. Please try again.', 'icons/error.png', 'no');
 	} else {
 		$result = json_decode($response);
+        //_debug('REQUEST RESULT: '.print_r($result));
 		if (json_last_error() != JSON_ERROR_NONE) {
 			// adapt to trakt error objects and set error to curl error output
 			$result = (object) array('status' => 'failure', 'error' => $response);
@@ -344,45 +345,25 @@ function display_upcoming_shows() {
 	if (!is_authenticated()) {
 		print_auth_error();
 	} else {
-		$titles = get_all_library_shows();
-		$today = date('Ymd');
-		$days = request_trakt("http://api.trakt.tv/calendar/shows.json/$apikey/$today/7");
+        $username = $w->get('username', 'settings.plist');
+		$days = request_trakt("http://api.trakt.tv/user/calendar/shows.json/$apikey/$username");
 
 		if (is_valid($days)) {
-			$cnt = 0;
-			foreach ($days as $day) {
-				foreach ($day->episodes as $eps) {
-					if (in_array($eps->show->title, $titles)) {
-						$cnt++;
-						print_episode($eps->show, $eps->episode);
-					}
-				}
-			}
+            $cnt = 0;
+            foreach ($days as $day) {
+                $cnt = $cnt + count($day->episodes);
+            }
 			if ($cnt == 0) {
 				$w->result('info', '', 'No upcoming shows.', 'Add some shows to your collection.', 'icons/info.png', 'no');
 			} else {
-				$result = display_count($cnt);
-				array_unshift($w->resultsref(), $result);
+                display_count($cnt);
+                foreach ($days as $day) {
+                    foreach ($day->episodes as $eps) {
+                        print_episode($eps->show, $eps->episode);
+                    }
+                }
 			}
 		}
-	}
-}
-
-/**
- * Get all library shows
- */
-function get_all_library_shows() {
-	global $apikey, $w;
-	if (!is_authenticated()) {
-		print_auth_error();
-	} else {
-		$username = $w->get('username', 'settings.plist');
-		$shows = request_trakt("http://api.trakt.tv/user/library/shows/all.json/$apikey/$username");
-		$titles = array();
-		foreach ($shows as $show) {
-			array_push($titles, $show->title);
-		}
-		return $titles;
 	}
 }
 
