@@ -63,8 +63,17 @@ if (!$apikey) {
 				handle_show_option("show/$operation");
 				break;
 			case 'rate':
-				display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
+				if (count($queryArray) == 4) {
+					$rating = $queryArray[3];
+					handle_rating('show', $showPrefix.$id.':summary');
+				} else {
+					display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
+				}
 				break;
+            case 'unrate':
+                $rating = '0';
+                handle_rating('show', $showPrefix.$id.':summary');
+                break;
 		}
 	} else if (strpos($query, $moviePrefix) === 0) {
 		// this is a movie
@@ -89,9 +98,18 @@ if (!$apikey) {
 			case 'library':
 			case 'unlibrary':
 				handle_movie_option("movie/$operation");
-			case 'rate':
-				display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
-				break;
+            case 'rate':
+                if (count($queryArray) == 4) {
+                    $rating = $queryArray[3];
+                    handle_rating('movie', $moviePrefix.$id.':summary');
+                } else {
+                    display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
+                }
+                break;
+            case 'unrate':
+                $rating = '0';
+                handle_rating('movie', $moviePrefix.$id.':summary');
+                break;
 		}
 	} else if (strpos($query, $episodePrefix) === 0) {
 		// this is an episode
@@ -116,9 +134,18 @@ if (!$apikey) {
 			case 'unlibrary':
 				handle_episode_option("show/episode/$operation");
 				break;
-			case 'rate':
-				display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
-				break;
+            case 'rate':
+                if (count($queryArray) == 6) {
+                    $rating = $queryArray[5];
+                    handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':summary');
+                } else {
+                    display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
+                }
+                break;
+            case 'unrate':
+                $rating = '0';
+                handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':summary');
+                break;
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
 		// this is a trend
@@ -821,6 +848,38 @@ function handle_option($apiName, $target, $additional) {
 }
 
 /**
+ * Handle a rating. Supported types: movie, show, episode
+ *
+ * @param $type - must be one of [movie/show/episode]
+ * @param $target - the target
+ */
+function handle_rating($type, $target) {
+	global $apikey, $w, $rating, $season, $episode;
+
+    switch ($type) {
+        case 'movie':
+            $movie = get_movie();
+            $additional = array('imdb_id' => $movie->imdb_id, 'tvdb_id' => $movie->tvdb_id, 'title' => $movie->title, 'year' => $movie->year, 'rating' => $rating);
+            break;
+        case 'show':
+            $show = get_show();
+            $additional = array('imdb_id' => $show->imdb_id, 'tvdb_id' => $show->tvdb_id, 'title' => $show->title, 'year' => $show->year, 'rating' => $rating);
+            break;
+        case 'episode':
+            $show = get_show();
+            $additional = array('imdb_id' => $show->imdb_id, 'tvdb_id' => $show->tvdb_id, 'title' => $show->title, 'year' => $show->year, 'season' => $season, 'episode' => $episode, 'rating' => $rating);
+            break;
+    }
+
+	$result = request_trakt("http://api.trakt.tv/rate/$type/$apikey", $additional);
+
+	$w->result($type, '', 'Back ...', '', 'icons/back.png', 'no', $target);
+	if (is_valid($result)) {
+		$w->result($type, '', get_ok_message(array($type, $rating > 0 ? 'rate' : 'unrate')), '', 'icon.png', 'no', $target);
+	}
+}
+
+/**
  * Get the message for the specified message array
  *
  * @param $msgArray - the message array (1st element: name, 2nd element: operation)
@@ -840,6 +899,10 @@ function get_ok_message($msgArray) {
 			return 'The '.$msgArray[0].' has been added to your library!';
 		case 'unlibrary':
 			return 'The '.$msgArray[0].' has been removed from your library!';
+		case 'rate':
+			return 'The '.$msgArray[0].' has been rated!';
+		case 'unrate':
+			return 'The rating for the '.$msgArray[0].' has been removed!';
 	}
 }
 
