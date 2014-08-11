@@ -220,6 +220,8 @@ echo $w->toxml();
 function request_trakt($url, $payload=null) {
 	global $w;
 	$options = get_post_options($payload);
+    _debug('REQUEST URL: '.$url);
+    //_debug('REQUEST OPTIONS: '.print_r($options, true));
 	$response = $w->request($url, $options);
 	if (empty($response)) {
 		$w->result('', '', 'Error', 'Trakt returned some invalid data. Please try again.', 'icons/error.png', 'no');
