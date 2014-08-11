@@ -591,7 +591,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>escaping</key>
 				<integer>36</integer>
 				<key>keyword</key>
@@ -607,7 +607,7 @@ if (empty($username) || empty($password) || empty($apikey)) {
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
