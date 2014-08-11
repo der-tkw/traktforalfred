@@ -610,9 +610,9 @@ function display_episode_watchlist() {
 		$username = $w->get('username', 'settings.plist');
 		$eps = request_trakt("http://api.trakt.tv/user/watchlist/episodes.json/$apikey/$username");
 
-		if (is_valid($shows)) {
+		if (is_valid($eps)) {
 			$w->result('episodewatchlist', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
-			display_count(count($shows));
+			display_count(count($eps));
 			print_episodes($eps);
 			check_empty('watchlist');
 		}
@@ -685,7 +685,7 @@ function display_show_summary() {
 			$w->result('certification', '', $show->certification, 'Certification', 'icons/certification.png', 'no');
 		}
 		if ($count[0] > 0) {
-			$specials;
+			$specials = '';
 			if ($count[1] > 0) {
 				$specials = ' (Plus '.$count[1].' Special Episodes)';
 			}
@@ -1020,7 +1020,7 @@ function count_episodes($show) {
  */
 function get_latest_episode($show) {
 	$today = new DateTime("now");
-	$latestEpisode;
+	$latestEpisode = '';
 	$diff = 2147483647;
 	foreach ($show->seasons as $season) {
 		if ($season->season > 0) {
@@ -1038,7 +1038,7 @@ function get_latest_episode($show) {
 			}
 		}
 	}
-	if (isset($latestEpisode)) {
+	if (!empty($latestEpisode)) {
 		return $latestEpisode;
 	}
 }
@@ -1050,7 +1050,7 @@ function get_latest_episode($show) {
  */
 function handle_multiple_information($infos) {
 	$separator = ', ';
-	$result;
+	$result = '';
 	foreach ($infos as $key => $value) {
 		if (isset($value) && !empty($value)) {
 			$result = $result.$separator;
@@ -1162,8 +1162,8 @@ function check_empty($what) {
  */
 function _debug($what) {
 	global $w, $debugEnabled;
-	$fileName = 'debug.log';
 	if ($debugEnabled) {
+        $fileName = 'debug.log';
 		$w->write(date('Y-m-d G:i:s').' -- ', $fileName, FILE_APPEND);
 		$w->write($what,  $fileName, FILE_APPEND);
 		$w->write(PHP_EOL, $fileName, FILE_APPEND);
