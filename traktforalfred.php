@@ -98,6 +98,7 @@ if (!$apikey) {
 			case 'library':
 			case 'unlibrary':
 				handle_movie_option("movie/$operation");
+                break;
             case 'rate':
                 if (count($queryArray) == 4) {
                     $rating = $queryArray[3];
@@ -328,7 +329,7 @@ function display_show_trends() {
  * @param $targetPrefix - the target prefix
  */
 function display_rating_options($back, $targetPrefix) {
-	global $w, $showPrefix, $id, $ratingOptions;
+	global $w, $ratingOptions;
 	$w->result('rate', '', 'Back ...', '', 'icons/back.png', 'no', $back);
 	foreach ($ratingOptions as $label => $rating) {
 		$w->result('rate', '', $label, '', 'icons/rating.png', 'no', $targetPrefix.$rating);
@@ -883,7 +884,7 @@ function handle_rating($type, $target) {
  * Get the message for the specified message array
  *
  * @param $msgArray - the message array (1st element: name, 2nd element: operation)
-
+ * @return string - the ok messsage
  */
 function get_ok_message($msgArray) {
 	switch($msgArray[1]) {
@@ -1033,6 +1034,7 @@ function print_episode($show, $ep) {
  * Get a list of top 2 cast for the specified item (may be a show or a movie)
  *
  * @param $item - the item
+ * @return string - the top cast
  */
 function get_main_cast($item) {
 	$result = array();
@@ -1110,6 +1112,7 @@ function get_latest_episode($show) {
  * Handle multiple information, skip empty info etc.
  *
  * @param $infos - array of information key/value pairs
+ * @return array - updated infos array
  */
 function handle_multiple_information($infos) {
 	$separator = ', ';
@@ -1135,6 +1138,7 @@ function handle_multiple_information($infos) {
  * Otherwise an empty array will be returned.
  *
  * @param $payload - the optional POST body payload
+ * @return array - the post options
  */
 function get_post_options($payload=null) {
 	global $w;
@@ -1232,5 +1236,3 @@ function _debug($what) {
 		$w->write(PHP_EOL, $fileName, FILE_APPEND);
 	}
 }
-
-?>
