@@ -172,7 +172,7 @@ if (!$apikey) {
 		// this is a recommendation
 		$queryArray = explode(':', $query);
 		$recommendationPrefix = $queryArray[1];
-	
+
 		switch ($recommendationPrefix) {
 			case 'shows':
 				display_show_recommendations();
@@ -317,7 +317,7 @@ function display_upcoming_shows() {
 		$titles = get_all_library_shows();
 		$today = date('Ymd');
 		$days = request_trakt("http://api.trakt.tv/calendar/shows.json/$apikey/$today/7");
-	
+
 		if (is_valid($days)) {
 			$cnt = 0;
 			foreach ($days as $day) {
@@ -473,12 +473,12 @@ function display_recommendation_options() {
  */
 function display_show_recommendations() {
 	global $apikey, $w;
-	
+
 	if (!is_authenticated()) {
 		print_auth_error();
 	} else {
 		$shows = request_trakt("http://api.trakt.tv/recommendations/shows/$apikey");
-	
+
 		if (is_valid($shows)) {
 			$w->result('showrecommendation', '', 'Back ...', '', 'icons/back.png', 'no', ' ');
 			display_count(count($shows));
@@ -1053,7 +1053,7 @@ function handle_multiple_information($infos) {
 		if (isset($value) && !empty($value)) {
 			$result = $result.$separator;
 			$result = $result.$key.': '.$value;
-			
+
 			// handle eventual suffixes
 			if ($key == 'Rating') {
 				$result = $result.'%';
@@ -1087,7 +1087,7 @@ function get_post_options($payload=null) {
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_POSTFIELDS => json_encode($payload)
 	);
-	
+
 	return $options;
 }
 
