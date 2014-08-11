@@ -65,14 +65,14 @@ if (!$apikey) {
 			case 'rate':
 				if (count($queryArray) == 4) {
 					$rating = $queryArray[3];
-					handle_rating('show', $showPrefix.$id.':summary');
+					handle_rating('show', $showPrefix.$id.':options');
 				} else {
 					display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
 				}
 				break;
             case 'unrate':
                 $rating = '0';
-                handle_rating('show', $showPrefix.$id.':summary');
+                handle_rating('show', $showPrefix.$id.':options');
                 break;
 		}
 	} else if (strpos($query, $moviePrefix) === 0) {
@@ -102,14 +102,14 @@ if (!$apikey) {
             case 'rate':
                 if (count($queryArray) == 4) {
                     $rating = $queryArray[3];
-                    handle_rating('movie', $moviePrefix.$id.':summary');
+                    handle_rating('movie', $moviePrefix.$id.':options');
                 } else {
                     display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
                 }
                 break;
             case 'unrate':
                 $rating = '0';
-                handle_rating('movie', $moviePrefix.$id.':summary');
+                handle_rating('movie', $moviePrefix.$id.':options');
                 break;
 		}
 	} else if (strpos($query, $episodePrefix) === 0) {
@@ -138,14 +138,14 @@ if (!$apikey) {
             case 'rate':
                 if (count($queryArray) == 6) {
                     $rating = $queryArray[5];
-                    handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':summary');
+                    handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
                 } else {
                     display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
                 }
                 break;
             case 'unrate':
                 $rating = '0';
-                handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':summary');
+                handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
                 break;
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
