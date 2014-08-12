@@ -113,6 +113,12 @@ if (!$apikey) {
                 $rating = '0';
                 handle_rating('movie', $moviePrefix.$id.':options');
                 break;
+            case 'checkin':
+                handle_checkin('movie', $moviePrefix.$id.':options');
+                break;
+            case 'cancelcheckin':
+                handle_cancelcheckin('movie', $moviePrefix.$id.':options');
+                break;
 		}
 	} else if (strpos($query, $episodePrefix) === 0) {
 		// this is an episode
@@ -148,6 +154,12 @@ if (!$apikey) {
             case 'unrate':
                 $rating = '0';
                 handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+                break;
+            case 'checkin':
+                handle_checkin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+                break;
+            case 'cancelcheckin':
+                handle_cancelcheckin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
                 break;
 		}
 	} else if (strpos($query, $trendsPrefix) === 0) {
@@ -373,6 +385,7 @@ function display_upcoming_shows() {
 /**
  * Display options
  *
+ * @param $type - the type (episode/show/movie)
  * @param $item - the item to get the user information from
  * @param $back - the back target
  * @param $targetPrefix - the target prefix
@@ -380,11 +393,19 @@ function display_upcoming_shows() {
  * @param $showCollection - show collection option (defaults to true)
  * @param $showWatched - show watched option (defaults to true)
  * @param $showRate - show rate option (defaults to true)
+ * @param $showCheckin - show checkin option (defaults to true)
  */
-function display_options($item, $back, $targetPrefix, $showWatchlist=true, $showCollection=true, $showWatched=true, $showRate=true) {
+function display_options($type, $item, $back, $targetPrefix, $showWatchlist=true, $showCollection=true, $showWatched=true, $showRate=true, $showCheckin=true) {
 	global $w;
 	$w->result('back', '', 'Back ...', '', 'icons/back.png', 'no', $back);
 	if (is_valid($item)) {
+        if ($showCheckin) {
+            if (is_checked_in($type, $item)) {
+                $w->result('cancelcheckin', '', 'Cancel Checkin', '', 'icons/cancelcheckin.png', 'no', $targetPrefix.':cancelcheckin');
+            } else {
+                $w->result('checkin', '', 'Checkin', '', 'icons/checkin.png', 'no', $targetPrefix.':checkin');
+            }
+        }
 		if ($showWatchlist) {
 			if ($item->in_watchlist) {
 				$w->result('unwatchlist', '', 'Remove from watchlist', '', 'icons/watchlistremove.png', 'no', $targetPrefix.':unwatchlist');
@@ -436,7 +457,7 @@ function display_movie_options() {
 	$movie = request_trakt("movie/summary.json/$apikey/$id");
 
 	if (is_valid($movie)) {
-		display_options($movie, $moviePrefix.$id.':summary', $moviePrefix.$id);
+		display_options('movie', $movie, $moviePrefix.$id.':summary', $moviePrefix.$id);
 	}
 }
 
@@ -448,7 +469,7 @@ function display_episode_options() {
 	$ep = request_trakt("show/episode/summary.json/$apikey/$id/$season/$episode");
 
 	if (is_valid($ep->episode)) {
-		display_options($ep->episode, $episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode);
+		display_options('episode', $ep->episode, $episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode);
 	}
 }
 
@@ -737,7 +758,7 @@ function display_movie_summary() {
 			$w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no', $moviePrefix.$movie->imdb_id.':cast');
 		}
 		if (is_authenticated()) {
-			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $moviePrefix.$movie->imdb_id.':options');
+			$w->result('summary', '', 'Show Options ...', 'Checkin/Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $moviePrefix.$movie->imdb_id.':options');
 		}
 		$w->result('summary', '', $movie->stats->watchers.' Watchers, '.$movie->stats->plays.' Plays, '.$movie->stats->scrobbles.' Scrobbles', 'Stats', 'icons/stats.png', 'no');
 		$w->result('summary', $movie->url, 'View on trakt.tv', '', 'icons/external.png');
@@ -763,7 +784,7 @@ function display_episode_summary() {
 			$w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
 		}
 		if (is_authenticated()) {
-			$w->result('summary', '', 'Show Options ...', 'Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+			$w->result('summary', '', 'Show Options ...', 'Checkin/Watchlist/Library/Seen/Rate', 'icons/options.png', 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
 			$w->result('summary', '', $ep->episode->plays, 'Personal Plays', 'icons/stats.png', 'no');
 		}
 		$w->result('summary', $ep->episode->url, 'View on trakt.tv', '', 'icons/external.png');
@@ -865,6 +886,84 @@ function handle_rating($type, $target) {
 }
 
 /**
+ * Check if the specified item is checked in
+ *
+ * @param $type - must be one of [movie/episode]
+ * @param $item - the item to check
+ * @return true in case the item is checked in, false otheriwse
+ */
+function is_checked_in($type, $item) {
+    global $apikey, $w;
+
+    $username = $w->get('username', 'settings.plist');
+    $result = request_trakt("user/watching.json/$apikey/$username");
+
+    $checked_in = false;
+
+    if (is_valid($result)) {
+        switch ($result->type) {
+            case 'movie':
+                if ($type === 'movie' && $result->movie->title === $item->title) {
+                    $checked_in = true;
+                }
+                break;
+            case 'episode':
+                if ($type === 'episode' && $result->episode->title === $item->title
+                    && $result->episode->season === $item->season
+                    && $result->episode->number === $item->number) {
+                    $checked_in = true;
+                }
+                break;
+        }
+    }
+    return $checked_in;
+}
+
+/**
+ * Handle a checkin. Supported types: movie, show
+ *
+ * @param $type - must be one of [movie/show]
+ * @param $target - the target
+ */
+function handle_checkin($type, $target) {
+    global $apikey, $w, $season, $episode;
+
+    switch ($type) {
+        case 'movie':
+            $movie = get_movie();
+            $additional = array('imdb_id' => $movie->imdb_id, 'tvdb_id' => $movie->tvdb_id, 'title' => $movie->title, 'year' => $movie->year);
+            break;
+        case 'show':
+            $show = get_show();
+            $additional = array('imdb_id' => $show->imdb_id, 'tvdb_id' => $show->tvdb_id, 'title' => $show->title, 'year' => $show->year, 'season' => $season, 'episode' => $episode);
+            break;
+    }
+
+    $result = request_trakt("$type/checkin/$apikey", $additional);
+
+    $w->result($type, '', 'Back ...', '', 'icons/back.png', 'no', $target);
+    if (is_valid($result)) {
+        $w->result($type, '', get_ok_message(array($type, 'checkin')), '', 'icon.png', 'no', $target);
+    }
+}
+
+/**
+ * Handle a cancelcheckin. Supported types: movie, show
+ *
+ * @param $type - must be one of [movie/show]
+ * @param $target - the target
+ */
+function handle_cancelcheckin($type, $target) {
+    global $apikey, $w;
+    $result = request_trakt("$type/cancelcheckin/$apikey");
+
+    $w->result($type, '', 'Back ...', '', 'icons/back.png', 'no', $target);
+    if (is_valid($result)) {
+        $w->result($type, '', get_ok_message(array($type, 'cancelcheckin')), '', 'icon.png', 'no', $target);
+    }
+}
+
+/**
  * Get the message for the specified message array
  *
  * @param $msgArray - the message array (1st element: name, 2nd element: operation)
@@ -888,6 +987,10 @@ function get_ok_message($msgArray) {
 			return 'The '.$msgArray[0].' has been rated!';
 		case 'unrate':
 			return 'The rating for the '.$msgArray[0].' has been removed!';
+        case 'checkin':
+            return 'The '.$msgArray[0].' has been checked in!';
+        case 'cancelcheckin':
+            return 'The checkin for the '.$msgArray[0].' has been removed!';
 	}
 }
 
