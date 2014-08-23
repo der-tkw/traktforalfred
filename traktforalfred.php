@@ -5,7 +5,7 @@ require('workflows.php');
 $w = new Workflows();
 
 $baseurl = 'https://api.trakt.tv/';
-$apikey = $w->get('apikey', 'settings.plist');
+$apikey = '19986d72b1d08e3aab27d25fe2d46eca8b0152cd';
 $mode = $argv[1];
 $query = $argv[2];
 $query = str_replace(' ', '+', $query);
@@ -38,216 +38,212 @@ $ratingOptions = array(
 	'Weak sauce :( (1)' => 1
 );
 
-if (!$apikey) {
-	$w->result('', '', 'Error', 'API key has not been set yet. Set it with the command \'trakt-apikey\'.', 'icons/error.png', 'no');
-} else {
-	if (strpos($query, $showPrefix) === 0) {
-		// this is a show
-		$queryArray = explode(':', $query);
-		$id = $queryArray[1];
-		$operation = $queryArray[2];
+if (strpos($query, $showPrefix) === 0) {
+    // this is a show
+    $queryArray = explode(':', $query);
+    $id = $queryArray[1];
+    $operation = $queryArray[2];
 
-		switch ($operation) {
-			case 'summary':
-				display_show_summary();
-				break;
-			case 'epguide':
-				display_show_epguide();
-				break;
-			case 'cast':
-				display_show_cast();
-				break;
-			case 'options':
-				display_show_options();
-				break;
-			case 'watchlist':
-			case 'unwatchlist':
-				handle_show_option("show/$operation");
-				break;
-			case 'rate':
-				if (count($queryArray) === 4) {
-					$rating = $queryArray[3];
-					handle_rating('show', $showPrefix.$id.':options');
-				} else {
-					display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
-				}
-				break;
-            case 'unrate':
-                $rating = '0';
+    switch ($operation) {
+        case 'summary':
+            display_show_summary();
+            break;
+        case 'epguide':
+            display_show_epguide();
+            break;
+        case 'cast':
+            display_show_cast();
+            break;
+        case 'options':
+            display_show_options();
+            break;
+        case 'watchlist':
+        case 'unwatchlist':
+            handle_show_option("show/$operation");
+            break;
+        case 'rate':
+            if (count($queryArray) === 4) {
+                $rating = $queryArray[3];
                 handle_rating('show', $showPrefix.$id.':options');
-                break;
-		}
-	} else if (strpos($query, $moviePrefix) === 0) {
-		// this is a movie
-		$queryArray = explode(':', $query);
-		$id = $queryArray[1];
-		$operation = $queryArray[2];
+            } else {
+                display_rating_options($showPrefix.$id.':summary', $showPrefix.$id.':rate:');
+            }
+            break;
+        case 'unrate':
+            $rating = '0';
+            handle_rating('show', $showPrefix.$id.':options');
+            break;
+    }
+} else if (strpos($query, $moviePrefix) === 0) {
+    // this is a movie
+    $queryArray = explode(':', $query);
+    $id = $queryArray[1];
+    $operation = $queryArray[2];
 
-		switch ($operation) {
-			case 'summary':
-				display_movie_summary();
-				break;
-			case 'cast':
-				display_movie_cast();
-				break;
-			case 'options':
-				display_movie_options();
-				break;
-			case 'watchlist':
-			case 'unwatchlist':
-			case 'seen':
-			case 'unseen':
-			case 'library':
-			case 'unlibrary':
-				handle_movie_option("movie/$operation");
-                break;
-            case 'rate':
-                if (count($queryArray) === 4) {
-                    $rating = $queryArray[3];
-                    handle_rating('movie', $moviePrefix.$id.':options');
-                } else {
-                    display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
-                }
-                break;
-            case 'unrate':
-                $rating = '0';
+    switch ($operation) {
+        case 'summary':
+            display_movie_summary();
+            break;
+        case 'cast':
+            display_movie_cast();
+            break;
+        case 'options':
+            display_movie_options();
+            break;
+        case 'watchlist':
+        case 'unwatchlist':
+        case 'seen':
+        case 'unseen':
+        case 'library':
+        case 'unlibrary':
+            handle_movie_option("movie/$operation");
+            break;
+        case 'rate':
+            if (count($queryArray) === 4) {
+                $rating = $queryArray[3];
                 handle_rating('movie', $moviePrefix.$id.':options');
-                break;
-            case 'checkin':
-                handle_checkin('movie', $moviePrefix.$id.':options');
-                break;
-            case 'cancelcheckin':
-                handle_cancelcheckin('movie', $moviePrefix.$id.':options');
-                break;
-		}
-	} else if (strpos($query, $episodePrefix) === 0) {
-		// this is an episode
-		$queryArray = explode(':', $query);
-		$id = $queryArray[1];
-		$season = $queryArray[2];
-		$episode = $queryArray[3];
-		$operation = $queryArray[4];
+            } else {
+                display_rating_options($moviePrefix.$id.':summary', $moviePrefix.$id.':rate:');
+            }
+            break;
+        case 'unrate':
+            $rating = '0';
+            handle_rating('movie', $moviePrefix.$id.':options');
+            break;
+        case 'checkin':
+            handle_checkin('movie', $moviePrefix.$id.':options');
+            break;
+        case 'cancelcheckin':
+            handle_cancelcheckin('movie', $moviePrefix.$id.':options');
+            break;
+    }
+} else if (strpos($query, $episodePrefix) === 0) {
+    // this is an episode
+    $queryArray = explode(':', $query);
+    $id = $queryArray[1];
+    $season = $queryArray[2];
+    $episode = $queryArray[3];
+    $operation = $queryArray[4];
 
-		switch ($operation) {
-			case 'summary':
-				display_episode_summary();
-				break;
-			case 'options':
-				display_episode_options();
-				break;
-			case 'watchlist':
-			case 'unwatchlist':
-			case 'seen':
-			case 'unseen':
-			case 'library':
-			case 'unlibrary':
-				handle_episode_option("show/episode/$operation");
-				break;
-            case 'rate':
-                if (count($queryArray) === 6) {
-                    $rating = $queryArray[5];
-                    handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
-                } else {
-                    display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
-                }
-                break;
-            case 'unrate':
-                $rating = '0';
+    switch ($operation) {
+        case 'summary':
+            display_episode_summary();
+            break;
+        case 'options':
+            display_episode_options();
+            break;
+        case 'watchlist':
+        case 'unwatchlist':
+        case 'seen':
+        case 'unseen':
+        case 'library':
+        case 'unlibrary':
+            handle_episode_option("show/episode/$operation");
+            break;
+        case 'rate':
+            if (count($queryArray) === 6) {
+                $rating = $queryArray[5];
                 handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
-                break;
-            case 'checkin':
-                handle_checkin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
-                break;
-            case 'cancelcheckin':
-                handle_cancelcheckin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
-                break;
-		}
-	} else if (strpos($query, $trendsPrefix) === 0) {
-		// this is a trend
-		$queryArray = explode(':', $query);
-		$trendMode = $queryArray[1];
+            } else {
+                display_rating_options($episodePrefix.$id.':'.$season.':'.$episode.':summary', $episodePrefix.$id.':'.$season.':'.$episode.':rate:');
+            }
+            break;
+        case 'unrate':
+            $rating = '0';
+            handle_rating('episode', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+            break;
+        case 'checkin':
+            handle_checkin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+            break;
+        case 'cancelcheckin':
+            handle_cancelcheckin('show', $episodePrefix.$id.':'.$season.':'.$episode.':options');
+            break;
+    }
+} else if (strpos($query, $trendsPrefix) === 0) {
+    // this is a trend
+    $queryArray = explode(':', $query);
+    $trendMode = $queryArray[1];
 
-		switch ($trendMode) {
-			case 'shows':
-				display_show_trends();
-				break;
-			case 'movies':
-				display_movie_trends();
-				break;
-		}
-	} else if (strpos($query, $watchlistPrefix) === 0) {
-		// this is a watchlist
-		$queryArray = explode(':', $query);
-		$watchlistMode = $queryArray[1];
+    switch ($trendMode) {
+        case 'shows':
+            display_show_trends();
+            break;
+        case 'movies':
+            display_movie_trends();
+            break;
+    }
+} else if (strpos($query, $watchlistPrefix) === 0) {
+    // this is a watchlist
+    $queryArray = explode(':', $query);
+    $watchlistMode = $queryArray[1];
 
-		switch ($watchlistMode) {
-			case 'shows':
-				display_show_watchlist();
-				break;
-			case 'movies':
-				display_movie_watchlist();
-				break;
-			case 'episodes':
-				display_episode_watchlist();
-				break;
-		}
-	} else if (strpos($query, $libraryPrefix) === 0) {
-		// this is a library
-		$queryArray = explode(':', $query);
-		$libraryType = $queryArray[1];
+    switch ($watchlistMode) {
+        case 'shows':
+            display_show_watchlist();
+            break;
+        case 'movies':
+            display_movie_watchlist();
+            break;
+        case 'episodes':
+            display_episode_watchlist();
+            break;
+    }
+} else if (strpos($query, $libraryPrefix) === 0) {
+    // this is a library
+    $queryArray = explode(':', $query);
+    $libraryType = $queryArray[1];
 
-		switch ($libraryType) {
-			case 'watchedshows':
-				display_show_library('watched');
-				break;
-			case 'collectedshows':
-				display_show_library('collection');
-				break;
-			case 'watchedmovies':
-				display_movie_library('watched');
-				break;
-			case 'collectedmovies':
-				display_movie_library('collection');
-				break;
-		}
-	} else if (strpos($query, $recommendationPrefix) === 0) {
-		// this is a recommendation
-		$queryArray = explode(':', $query);
-		$recommendationPrefix = $queryArray[1];
+    switch ($libraryType) {
+        case 'watchedshows':
+            display_show_library('watched');
+            break;
+        case 'collectedshows':
+            display_show_library('collection');
+            break;
+        case 'watchedmovies':
+            display_movie_library('watched');
+            break;
+        case 'collectedmovies':
+            display_movie_library('collection');
+            break;
+    }
+} else if (strpos($query, $recommendationPrefix) === 0) {
+    // this is a recommendation
+    $queryArray = explode(':', $query);
+    $recommendationPrefix = $queryArray[1];
 
-		switch ($recommendationPrefix) {
-			case 'shows':
-				display_show_recommendations();
-				break;
-			case 'movies':
-				display_movie_recommendations();
-				break;
-		}
-	} else {
-		switch($mode) {
-			case 'trends':
-				display_trend_options();
-				break;
-			case 'watchlists':
-				display_watchlist_options();
-				break;
-			case 'libraries':
-				display_library_options();
-				break;
-			case 'recommendations':
-				display_recommendation_options();
-				break;
-			case 'shows':
-				search_shows();
-				break;
-			case 'movies':
-				search_movies();
-				break;
-			case 'upcoming':
-				display_upcoming_shows();
-				break;
-		}
-	}
+    switch ($recommendationPrefix) {
+        case 'shows':
+            display_show_recommendations();
+            break;
+        case 'movies':
+            display_movie_recommendations();
+            break;
+    }
+} else {
+    switch($mode) {
+        case 'trends':
+            display_trend_options();
+            break;
+        case 'watchlists':
+            display_watchlist_options();
+            break;
+        case 'libraries':
+            display_library_options();
+            break;
+        case 'recommendations':
+            display_recommendation_options();
+            break;
+        case 'shows':
+            search_shows();
+            break;
+        case 'movies':
+            search_movies();
+            break;
+        case 'upcoming':
+            display_upcoming_shows();
+            break;
+    }
 }
 
 echo $w->toxml();
