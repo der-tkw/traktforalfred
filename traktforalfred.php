@@ -816,7 +816,7 @@ function print_show_summary() {
             $w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no',
                 $showPrefix.$id.':cast');
         }
-        if (is_authenticated()) {
+        if (is_authenticated(false)) {
             $w->result('summary', '', 'Show Options ...', 'Watchlist/Rate', 'icons/options.png', 'no',
                 $showPrefix.$id.':options');
         }
@@ -857,7 +857,7 @@ function print_movie_summary() {
             $w->result('summary', '', 'Show Cast ...', $maincast.', ...', 'icons/cast.png', 'no',
                 $moviePrefix.$movie->imdb_id.':cast');
         }
-        if (is_authenticated()) {
+        if (is_authenticated(false)) {
             $w->result('summary', '', 'Show Options ...', 'Checkin/Watchlist/Library/Seen/Rate', 'icons/options.png',
                 'no', $moviePrefix.$movie->imdb_id.':options');
         }
@@ -889,7 +889,7 @@ function print_episode_summary() {
         if (!empty($ep->episode->overview)) {
             $w->result('summary', '', $ep->episode->overview, 'Overview', 'icons/info.png', 'no');
         }
-        if (is_authenticated()) {
+        if (is_authenticated(false)) {
             $w->result('summary', '', 'Show Options ...', 'Checkin/Watchlist/Library/Seen/Rate', 'icons/options.png',
                 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
             $w->result('summary', '', $ep->episode->plays, 'Personal Plays', 'icons/stats.png', 'no');
@@ -1395,15 +1395,20 @@ function get_post_options($payload = null) {
 
 /**
  * Get authentication status.
+ *
+ * @param $print - print flag (enabled by default)
+ *
  * @return true in case the user has set its username and password (no validation!)
  */
-function is_authenticated() {
+function is_authenticated($print = true) {
     global $w;
     $username = $w->get('username', 'settings.plist');
     $password = $w->get('password', 'settings.plist');
 
     if (empty($username) || empty($password)) {
-        print_error('Please set your username and password correctly.');
+        if ($print) {
+            print_error('Please set your username and password correctly.');
+        }
         return false;
     }
     return true;
