@@ -1288,6 +1288,8 @@ function get_main_cast($item) {
  * Count episodes of the specified show
  *
  * @param $show - the show
+ *
+ * @return array - array of the episode count and the specials count
  */
 function count_episodes($show) {
     $counts = array();
