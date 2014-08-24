@@ -131,6 +131,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>B563CF3A-A65D-4523-96D9-86C5E4A7A740</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DCFB11F-591C-4E73-A169-9C269926F37D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
 		<array>
 			<dict>
@@ -616,6 +627,35 @@ if (empty($username) || empty($password)) {
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>18</integer>
+				<key>keyword</key>
+				<string>trakt-checkin</string>
+				<key>runningsubtext</key>
+				<string>Requesting the latest unwatched episodes ...</string>
+				<key>script</key>
+				<string>php -f traktforalfred.php -- 'checkin' '{query}'</string>
+				<key>subtext</key>
+				<string>Check in your next episode</string>
+				<key>title</key>
+				<string>Trakt Check In Episodes</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B563CF3A-A65D-4523-96D9-86C5E4A7A740</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>escaping</key>
 				<integer>36</integer>
@@ -709,6 +749,11 @@ echo $w-&gt;toxml();
 			<key>ypos</key>
 			<real>1000</real>
 		</dict>
+		<key>B563CF3A-A65D-4523-96D9-86C5E4A7A740</key>
+		<dict>
+			<key>ypos</key>
+			<real>1220</real>
+		</dict>
 		<key>C215BBD9-E442-42B1-AFC9-DEB49DFA0B4E</key>
 		<dict>
 			<key>ypos</key>
@@ -717,7 +762,7 @@ echo $w-&gt;toxml();
 		<key>C2F5C8E5-4B04-45F2-8516-D0C64645F5E1</key>
 		<dict>
 			<key>ypos</key>
-			<real>1220</real>
+			<real>1330</real>
 		</dict>
 		<key>CDCEF5B2-BCB7-4A89-80AD-F07207AAAD87</key>
 		<dict>

@@ -3,6 +3,7 @@
 
 ### Features
 #### General Features
+ - Quickly check in your latest unwatched episodes
  - Display latest unwatched episodes
  - Display upcoming shows of the next 7 days
  - Display trends (shows and movies)
@@ -71,6 +72,7 @@
 
 ### General Commands
  - `trakt-unwatched` will display the latest unwatched episodes
+ - `trakt-checkin` will display the latest unwatched episodes and lets you check them in instantly
  - `trakt-upcoming` will display the upcoming shows of the next 7 days
  - `trakt-trends` will show the current trending options
  - `trakt-recommendations` will show the current recommendation options
