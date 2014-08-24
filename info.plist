@@ -250,7 +250,7 @@ if (empty($username)) {
 	echo 'Error: Username is empty.';
 } else {
 	$w-&gt;set('username', $username, 'settings.plist');
-	echo 'Username has been saved.';
+	echo 'Username has been stored.';
 }</string>
 				<key>type</key>
 				<integer>1</integer>
@@ -280,7 +280,7 @@ if (empty($password)) {
 	echo 'Error: Password is empty.';
 } else {
 	$w-&gt;set('password', sha1($password), 'settings.plist');
-	echo 'Password hash has been saved.';
+	echo 'Password hash has been stored.';
 }</string>
 				<key>type</key>
 				<integer>1</integer>
@@ -546,7 +546,7 @@ if (empty($username) || empty($password)) {
 				<key>keyword</key>
 				<string>trakt-upcoming</string>
 				<key>runningsubtext</key>
-				<string>Requesting upcoming episodes ...</string>
+				<string>Requesting upcoming episodes for the next 7 days ...</string>
 				<key>script</key>
 				<string>php -f traktforalfred.php -- 'upcoming' '{query}'</string>
 				<key>subtext</key>

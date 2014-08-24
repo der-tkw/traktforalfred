@@ -92,6 +92,9 @@
 Copyright (c) 2013-2014 Tim Weller. See the LICENSE file for license rights and limitations (MIT).
 
 ### Screenshots
+##### Checkin
+![Checkin][screenshot_checkin]
+
 ##### Trends
 ![Trends][screenshot_trends]
 
@@ -118,6 +121,9 @@ Copyright (c) 2013-2014 Tim Weller. See the LICENSE file for license rights and 
 
 ##### Libraries Watched Shows
 ![Library Watched][screenshot_libraries_watchedshows]
+
+##### Unwatched
+![Unwatched][screenshot_unwatched]
 
 ##### Upcoming
 ![Upcoming][screenshot_upcoming]
@@ -167,6 +173,8 @@ Copyright (c) 2013-2014 Tim Weller. See the LICENSE file for license rights and 
 [Workflows]:https://github.com/jdfwarrior/Workflows
 [@iconmonstr]:https://twitter.com/iconmonstr
 [icons]:http://iconmonstr.com/
+[screenshot_unwatched]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/unwatched.png
+[screenshot_checkin]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/checkin.png
 [screenshot_upcoming]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/upcoming.png
 [screenshot_rate]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/rate.png
 [screenshot_summary_show]:https://dl.dropboxusercontent.com/u/2188000/traktforalfred/summary_show.png
