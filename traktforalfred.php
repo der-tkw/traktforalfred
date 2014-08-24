@@ -11,11 +11,11 @@ $query = $argv[2];
 $query = str_replace(' ', '+', $query);
 $debugEnabled = false;
 
-$id;
-$operation;
-$season;
-$episode;
-$rating;
+$id = null;
+$operation = null;
+$season = null;
+$episode = null;
+$rating = null;
 
 $showPrefix = 's:';
 $moviePrefix = 'm:';
@@ -972,6 +972,7 @@ function handle_option($apiName, $target, $additional) {
  */
 function handle_rating($type, $target) {
     global $apikey, $w, $rating, $season, $episode;
+    $additional = null;
 
     switch ($type) {
         case 'movie':
@@ -1042,6 +1043,7 @@ function is_checked_in($type, $item) {
  */
 function handle_checkin($type, $target) {
     global $apikey, $w, $season, $episode;
+    $additional = null;
 
     switch ($type) {
         case 'movie':
@@ -1182,8 +1184,6 @@ function print_movie_cast() {
  *
  * @param $count - the count
  * @param $msg - the optional message (default: 'Total')
- *
- * @return the added item
  */
 function print_count($count, $msg = 'Total') {
     if ($count > 0) {
@@ -1194,8 +1194,8 @@ function print_count($count, $msg = 'Total') {
 /**
  * Print the back line
  *
- * @param $uid the uid
- * @param $target the target
+ * @param $uid - the uid
+ * @param $target - the target
  */
 function print_back($uid, $target) {
     global $w;
@@ -1296,13 +1296,9 @@ function count_episodes($show) {
 
     foreach ($show->seasons as $season) {
         if ($season->season > 0) {
-            foreach ($season->episodes as $episode) {
-                $normalCnt++;
-            }
+            $normalCnt = $normalCnt + count($season->episodes);
         } else {
-            foreach ($season->episodes as $episode) {
-                $specialCnt++;
-            }
+            $specialCnt = $specialCnt = count($season->episodes);
         }
     }
     array_push($counts, $normalCnt);
@@ -1314,12 +1310,12 @@ function count_episodes($show) {
  * Find the latest episode for the specified show
  *
  * @param $show - the show
- * 
- * @return the latest episode
+ *
+ * @return object - the latest episode
  */
 function get_latest_episode($show) {
     $today = new DateTime("now");
-    $latestEpisode = '';
+    $latestEpisode = null;
     $diff = 2147483647;
 
     foreach ($show->seasons as $season) {
