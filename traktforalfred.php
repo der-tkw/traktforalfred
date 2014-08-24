@@ -243,6 +243,9 @@ if (strpos($query, $showPrefix) === 0) {
         case 'upcoming':
             display_upcoming_shows();
             break;
+        case 'unwatched':
+            display_unwatched_episodes();
+            break;
     }
 }
 
@@ -376,6 +379,46 @@ function display_upcoming_shows() {
 			}
 		}
 	}
+}
+
+/**
+ * Display unwatched episodes
+ */
+function display_unwatched_episodes() {
+    global $apikey, $w;
+    if (!is_authenticated()) {
+        print_auth_error();
+    } else {
+        $username = $w->get('username', 'settings.plist');
+        $shows = request_trakt("user/progress/watched.json/$apikey/$username");
+
+        if (is_valid($shows)) {
+            $cnt = 0;
+            $now = new DateTime();
+            $showsToPrint = array();
+            foreach ($shows as $show) {
+                // skip shows with no next episode as well as episodes that are airing in the future
+                if ($show->next_episode === false || $show->next_episode->first_aired > $now->getTimestamp()) {
+                    continue;
+                }
+                $cnt++;
+                array_push($showsToPrint, array($show->show, $show->next_episode));
+            }
+        }
+
+        if ($cnt === 0) {
+            $w->result('info', '', 'No unwatched episodes.', '', 'icons/info.png', 'no');
+        } else {
+            // sort episodes by air date
+            usort($showsToPrint, function($a, $b) {
+                return $a[1]->first_aired > $b[1]->first_aired ? -1 : 1;
+            });
+            display_count($cnt);
+            foreach ($showsToPrint as $showToPrint) {
+                print_episode($showToPrint[0], $showToPrint[1]);
+            }
+        }
+    }
 }
 
 /**

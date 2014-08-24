@@ -3,6 +3,7 @@
 
 ### Features
 #### General Features
+ - Display latest unwatched episodes
  - Display upcoming shows of the next 7 days
  - Display trends (shows and movies)
  - Display recommendations (shows and movies)
@@ -69,6 +70,7 @@
  - `trakt-version` will show the current version
 
 ### General Commands
+ - `trakt-unwatched` will display the latest unwatched episodes
  - `trakt-upcoming` will display the upcoming shows of the next 7 days
  - `trakt-trends` will show the current trending options
  - `trakt-recommendations` will show the current recommendation options
@@ -78,7 +80,7 @@
  - `trakt-movies thor` will search for movies containing the name *thor*
 
 ### Version
-1.5
+1.6 beta
 
 ### Thanks
  - [David Ferguson] for creating [Workflows]
