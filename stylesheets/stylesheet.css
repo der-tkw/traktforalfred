@@ -105,7 +105,7 @@ header h2 {
 a.button {
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;                     
-  border-radius: 30px;
+  border-radius: 15px;
   border-top: solid 1px #cbcbcb;
   border-left: solid 1px #b7b7b7;
   border-right: solid 1px #b7b7b7;
