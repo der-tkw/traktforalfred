@@ -686,7 +686,7 @@ echo $w-&gt;toxml();
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>https://github.com/timbooo/traktforalfred/blob/master/README.md</string>
+	<string>https://timbooo.github.io/traktforalfred/</string>
 	<key>uidata</key>
 	<dict>
 		<key>02E5C931-7318-470A-94EE-F76CAE18A560</key>
@@ -781,6 +781,6 @@ echo $w-&gt;toxml();
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string>https://github.com/timbooo/traktforalfred</string>
+	<string>https://timbooo.github.io/traktforalfred/</string>
 </dict>
 </plist>
