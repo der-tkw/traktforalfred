@@ -5,6 +5,7 @@ require('workflows.php');
 $w = new Workflows();
 
 $baseurl = 'https://api.trakt.tv/';
+$baselinkurl = 'http://trakt.tv';
 $apikey = '19986d72b1d08e3aab27d25fe2d46eca8b0152cd';
 $mode = $argv[1];
 $query = $argv[2];
@@ -765,7 +766,7 @@ function search_movies() {
  * Print a show summary
  */
 function print_show_summary() {
-    global $w, $id, $showPrefix, $episodePrefix;
+    global $w, $id, $showPrefix, $episodePrefix, $baselinkurl;
     $show = get_show();
 
     if (is_valid($show)) {
@@ -827,7 +828,7 @@ function print_show_summary() {
         $w->result('summary', '',
             $show->stats->watchers.' Watchers, '.$show->stats->plays.' Plays, '.$show->stats->scrobbles.' Scrobbles',
             'Stats', 'icons/stats.png', 'no');
-        $w->result('summary', $show->url, 'View on trakt.tv', '', 'icons/external.png');
+        $w->result('summary', $baselinkurl.$show->url, 'View on trakt.tv', '', 'icons/external.png');
         $w->result('summary', 'http://www.imdb.com/title/'.$id, 'View on IMDB', '', 'icons/external.png');
         $w->result('summary',
             'https://www.youtube.com/results?search_query='.str_replace(' ', '+', $show->title.' trailer'),
@@ -839,7 +840,7 @@ function print_show_summary() {
  * Print a movie summary
  */
 function print_movie_summary() {
-    global $w, $moviePrefix;
+    global $w, $moviePrefix, $baselinkurl;
     $movie = get_movie();
 
     if (is_valid($movie)) {
@@ -864,7 +865,7 @@ function print_movie_summary() {
         $w->result('summary', '',
             $movie->stats->watchers.' Watchers, '.$movie->stats->plays.' Plays, '.$movie->stats->scrobbles.' Scrobbles',
             'Stats', 'icons/stats.png', 'no');
-        $w->result('summary', $movie->url, 'View on trakt.tv', '', 'icons/external.png');
+        $w->result('summary', $baselinkurl.$movie->url, 'View on trakt.tv', '', 'icons/external.png');
         $w->result('summary', "http://www.imdb.com/title/$movie->imdb_id", 'View on IMDB', '', 'icons/external.png');
         if (!empty($movie->trailer)) {
             $w->result('summary', $movie->trailer, 'Watch trailer on YouTube', '', 'icons/external.png');
@@ -876,7 +877,7 @@ function print_movie_summary() {
  * Print an episode summary
  */
 function print_episode_summary() {
-    global $w, $id, $episodePrefix, $showPrefix, $season, $episode;
+    global $w, $id, $episodePrefix, $showPrefix, $season, $episode, $baselinkurl;
     $ep = get_episode();
 
     if (is_valid($ep)) {
@@ -894,7 +895,7 @@ function print_episode_summary() {
                 'no', $episodePrefix.$id.':'.$season.':'.$episode.':options');
             $w->result('summary', '', $ep->episode->plays, 'Personal Plays', 'icons/stats.png', 'no');
         }
-        $w->result('summary', $ep->episode->url, 'View on trakt.tv', '', 'icons/external.png');
+        $w->result('summary', $baselinkurl.$ep->episode->url, 'View on trakt.tv', '', 'icons/external.png');
         $w->result('summary', 'http://www.imdb.com/title/'.$ep->episode->imdb_id, 'View on IMDB', '',
             'icons/external.png');
     }
