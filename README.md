@@ -2,7 +2,7 @@
 *Trakt for Alfred* is a workflow for [Alfred v2] that allows you to search for movies and tv shows on [trakt.tv], check out current trends and manage your personal libraries. 
 
 ### Under Construction
-I'm currently in the process of porting everything to trakt.tv API v2. At the end of June v1 will be disabled. I'm hoping to provide a new version until then.
+I'm currently in the process of porting everything to trakt.tv API v2. At the end of June v1 will be disabled. ~~I'm hoping to provide a new version until then.~~ I obviously failed. New goal: 2016.
 
 ### Version
 2.0.0 beta
@@ -13,7 +13,7 @@ I'm currently in the process of porting everything to trakt.tv API v2. At the en
  - [@iconmonstr] for the [icons]
 
 ### License
-Copyright (c) 2015 Tim Weller. See the LICENSE file for license rights and limitations (MIT).
+Copyright (c) 2013-2016 Tim Weller. See the LICENSE file for license rights and limitations (MIT).
 
 
 [Alfred v2]:http://www.alfredapp.com/
