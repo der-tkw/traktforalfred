@@ -2,11 +2,14 @@
 # encoding: utf-8
 
 import sys
+import logging
 from traktapi import TraktAPI
 from workflow import Workflow
 
 
 def main(wf):
+    logging.basicConfig(level=logging.DEBUG)
+
     action = wf.args[0]
     if len(wf.args) > 1:
         params = wf.args[1:]
@@ -28,7 +31,7 @@ def main(wf):
     """
     # check authentication
     if not traktapi.checkauth():
-        wf.add_item(u'Not Authenticated', u'Please use the keyword trakt-auth to provide a valid PIN')
+        wf.add_item(u'Not Authenticated', u'Please use the keyword trakt-auth and provide a valid PIN.')
         wf.send_feedback()
         return
 

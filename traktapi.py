@@ -30,7 +30,7 @@ class TraktAPI():
         Trakt.on('oauth.token_refreshed', self.__on_token_refreshed)
 
         # set base url
-        Trakt.base_url = 'http://api.trakt.tv'
+        Trakt.base_url = 'https://api-v2launch.trakt.tv'
 
         # set app defaults
         Trakt.configuration.defaults.app(
@@ -63,17 +63,20 @@ class TraktAPI():
         self.wf.settings.save()
 
     def pin(self, pin=None):
-        self.authorization = Trakt['oauth'].token_exchange(pin, 'urn:ietf:wg:oauth:2.0:oob')
+        with Trakt.configuration.http(retry=True):
+            try:
+                self.authorization = Trakt['oauth'].token_exchange(pin, 'urn:ietf:wg:oauth:2.0:oob')
 
-        if not self.authorization:
-            return False
-        else:
-            self.__storeauth()
-            return True
+                if not self.authorization:
+                    return False
+                else:
+                    self.__storeauth()
+                    return True
+            except Exception:
+                return False
 
     def user(self):
-        self.authorization['expires_in'] = 0;
-        with Trakt.configuration.oauth.from_response(self.authorization):
+        with Trakt.configuration.oauth.from_response(self.authorization, refresh=True):
             with Trakt.configuration.http(retry=True):
                 result = Trakt['users/settings'].get()
                 return result
